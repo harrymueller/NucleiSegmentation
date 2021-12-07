@@ -1,0 +1,9 @@
+# general
+alias l='ls -lah'
+alias py='python3'
+alias python='python3'
+
+# tools
+alias ST_BarcodeMap='~/tools/ST_BarcodeMap/./ST_BarcodeMap-0.0.1'
+alias fastp='~/tools/./fastp'
+alias STAR='~/tools/STAR-2.7.2b/source/./STAR'

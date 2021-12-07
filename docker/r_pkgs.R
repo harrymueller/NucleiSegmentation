@@ -1,14 +1,9 @@
-repo="https://cran.curtin.edu.au/"
+print("Installing R packages...")
 
-# dev tools dependencies
-#install.packages("usethis", repos=repo) 
-#install.packages("httr", repos=repo) 
-#install.packages("roxygen2", repos=repo) 
-#install.packages("rversions", repos=repo) 
+repo="https://cran.curtin.edu.au/"
 
 # pkg managers
 install.packages("devtools", repos=repo) 
-#install.packages("remotes", repos=repo)
 install.packages("BiocManager", repos=repo)
 
 # Seurat
@@ -29,3 +24,5 @@ BiocManager::install(c('BiocGenerics', 'DelayedArray', 'DelayedMatrixStats',
                        'SummarizedExperiment', 'batchelor', 'Matrix.utils'))
 devtools::install_github('cole-trapnell-lab/leidenbase')
 devtools::install_github('cole-trapnell-lab/monocle3')
+
+print("Installed R packages")
