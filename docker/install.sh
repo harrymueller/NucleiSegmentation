@@ -81,6 +81,31 @@ cd ~/tools
 pip install CellPhoneDB
 
 ##############################
+# x1 Singularity
+##############################
+apt-get install uuid-dev libgpgme-dev squashfs-tools libseccomp-dev \
+    pkg-config cryptsetup-bin -y
+
+# install GO
+export VERSION=1.14.12 OS=linux ARCH=amd64 && \
+    wget https://dl.google.com/go/go$VERSION.$OS-$ARCH.tar.gz && \
+    sudo tar -C /usr/local -xzvf go$VERSION.$OS-$ARCH.tar.gz && \
+    rm go$VERSION.$OS-$ARCH.tar.gz
+echo 'export GOPATH=${HOME}/go' >> ~/.bashrc && \
+    echo 'export PATH=/usr/local/go/bin:${PATH}:${GOPATH}/bin' >> ~/.bashrc && \
+    source ~/.bashrc
+
+wget https://github.com/sylabs/singularity/releases/download/v3.9.1/singularity-ce_3.9.1+6-g38b50cbc5-focal_amd64.deb
+dpkg -i singularity-ce_3.9.1+6-g38b50cbc5-focal_amd64.deb
+
+##############################
+# x2 SAW
+##############################
+singularity build SAW_v1.0.0.sif docker://stomics/saw:01.0.0 
+cd ~/tools
+git clone https://github.com/BGIResearch/SAW.git
+
+##############################
 # Finished
 ##############################
 echo ""
