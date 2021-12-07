@@ -19,5 +19,5 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN ./install.sh --noninteractive
 RUN Rscript r_pkgs.R
 
-ENV USER="rstudio"
-CMD ["/usr/lib/rstudio-server/bin/rserver", "--server-daemonize", "0", "--auth-none", "1"]
+#ENV USER="rstudio"
+#CMD ["/usr/lib/rstudio-server/bin/rserver", "--server-daemonize", "0", "--auth-none", "1"]

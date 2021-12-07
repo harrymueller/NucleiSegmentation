@@ -8,6 +8,13 @@ apt-get install git build-essential vim wget apt-utils systemctl -y
 mkdir ~/tools && cd ~/tools 
 
 ##############################
+# Aliases
+##############################
+cat aliases >> ~/.bashrc
+cat aliases >> /home/rstudio/.bashrc
+source ~/.bashrc
+
+##############################
 # 00 ST_BarcodeMap v1.0: https://github.com/BGIResearch/ST_BarcodeMap
 ##############################
 apt-get install libboost-thread-dev zlibc libhdf5-serial-dev -y # dependencies
@@ -53,18 +60,11 @@ source ~/.bashrc
 ##############################
 
 ##############################
-# 03.1 R
+# 03.1 Rstudio Working Directory config
 ##############################
-if false; then
-    apt-get install gfortran libbz2-dev liblzma-dev libpcre2-dev libcurl4-openssl-dev default-jdk -y
-
-    wget https://cran.r-project.org/src/base/R-4/R-4.1.2.tar.gz
-    tar -xzvf R-4.1.2.tar.gz
-    rm R-4.1.2.tar.gz
-
-    cd R-4.1.2
-    ./configure --with-readline=no --with-x=no --enable-R-shlib; make; make install
-fi
+RS_PATH=/mnt/data/rstudio
+echo "session-default-working-dir=$RS_PATH" >> /etc/rstudio/rsession.conf
+echo "session-default-new-project-dir=$RS_PATH" >> /etc/rstudio/rsession.conf
 
 ##############################
 # 03 04 05 07
@@ -78,13 +78,7 @@ apt-get install libssl-dev libxml2-dev libpng-dev -y
 apt-get install python3.8 pipenv python3-venv -y
 
 cd ~/tools
-pip install cellphonedb
-
-##############################
-# Aliases
-##############################
-cat aliases >> ~/.bashrc
-cat aliases >> /home/rstudio/.bashrc
+pip install CellPhoneDB
 
 ##############################
 # Finished
