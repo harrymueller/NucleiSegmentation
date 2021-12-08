@@ -6,14 +6,12 @@ FROM rocker/rstudio
 RUN apt-get update
 
 # copy scripts req. for docker
-COPY . . 
+COPY install.sh . 
+COPY r_pkgs.R .
+COPY aliases .
 
 # ensure apt is not interactive
 ARG DEBIAN_FRONTEND=noninteractive
-# disable auth for rstudio server
-#ENV DISABLE_AUTH=true
-# root permissions
-#ENV ROOT=TRUE
 
 # run install script
 RUN ./install.sh --noninteractive

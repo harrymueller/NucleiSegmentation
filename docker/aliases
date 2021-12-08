@@ -12,3 +12,6 @@ alias saw='~/tools/SAW/bin/./stereoRun.sh'
 # rstudio server
 alias rs='nohup /usr/lib/rstudio-server/bin/rserver --server-daemonize 0 --auth-none 1 > /home/rstudio/log.out &'
 alias killrs='kill -9 `pidof rserver`'
+
+# record usage
+alias rec='~/tools/usage/./run.sh'
