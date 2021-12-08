@@ -1,0 +1,6 @@
+> python temp.py
+Time: 		00:00:01
+Max CPU: 	100.0%
+Avg. CPU: 	99.5%
+Max RAM: 	0.0096GB
+Avg. RAM: 	0.0096GB

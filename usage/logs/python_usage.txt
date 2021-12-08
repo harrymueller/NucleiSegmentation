@@ -1,0 +1,7 @@
+Linux 5.13.19-2-MANJARO (harry-laptop) 	08/12/21 	_x86_64_	(16 CPU)
+
+# Time        UID       PID    %usr %system  %guest   %wait    %CPU   CPU  minflt/s  majflt/s     VSZ     RSS   %MEM  Command
+10:41:58     1000     16294   99.0%    0.0%    0.0%    0.0%   99.0%    12    961.00      0.00   14.0M    9.6M   0.0%  python
+
+# Time        UID       PID    %usr %system  %guest   %wait    %CPU   CPU  minflt/s  majflt/s     VSZ     RSS   %MEM  Command
+10:41:59     1000     16294  100.0%    0.0%    0.0%    0.0%  100.0%    12      1.00      0.00   14.0M    9.6M   0.0%  python
