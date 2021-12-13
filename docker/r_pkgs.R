@@ -30,5 +30,6 @@ install.packages("markdown")
 # gem2rds.R from BGI
 install.packages("raster")
 install.packages("rgdal")
+install.packages("argparser")
 
 print("Installed R packages")

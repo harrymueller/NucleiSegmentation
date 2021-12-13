@@ -108,7 +108,7 @@ git clone https://github.com/BGIResearch/SAW.git
 ##############################
 # R raster
 ##############################
-apt-get install libudunits2-dev libgdal-dev libgeos-dev libproj-dev -y
+apt-get install libudunits2-dev libgdal-dev libgeos-dev libproj-dev libxt-dev -y
 
 ##############################
 # Finished
