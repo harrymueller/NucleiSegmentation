@@ -2,7 +2,7 @@
 ##############################
 # Init setup
 ##############################
-apt-get install git build-essential vim wget apt-utils systemctl -y
+apt-get install git build-essential vim wget apt-utils systemctl tmux htop sysstat -y
 
 # dir to store tools files
 mkdir ~/tools && cd ~/tools 
@@ -10,7 +10,7 @@ mkdir ~/tools && cd ~/tools
 ##############################
 # Aliases
 ##############################
-cat aliases >> ~/.bashrc
+cat aliases >> /root/.bashrc
 cat aliases >> /home/rstudio/.bashrc
 source ~/.bashrc
 
@@ -62,7 +62,7 @@ source ~/.bashrc
 ##############################
 # 03.1 Rstudio Working Directory config
 ##############################
-RS_PATH=/mnt/data/rstudio
+RS_PATH=/mnt/local/rstudio
 echo "session-default-working-dir=$RS_PATH" >> /etc/rstudio/rsession.conf
 echo "session-default-new-project-dir=$RS_PATH" >> /etc/rstudio/rsession.conf
 
@@ -106,9 +106,17 @@ cd ~/tools
 git clone https://github.com/BGIResearch/SAW.git
 
 ##############################
+# R raster
+##############################
+apt-get install libudunits2-dev libgdal-dev libgeos-dev libproj-dev -y
+
+##############################
 # Finished
 ##############################
 echo ""
 echo "##############################"
 echo "Finished installing all packages."
 echo "##############################"
+
+
+export LD_LIBRARY_PATH=/lib:/usr/lib:/usr/local/lib

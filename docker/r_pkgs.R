@@ -25,4 +25,10 @@ BiocManager::install(c('BiocGenerics', 'DelayedArray', 'DelayedMatrixStats',
 devtools::install_github('cole-trapnell-lab/leidenbase')
 devtools::install_github('cole-trapnell-lab/monocle3')
 
+install.packages("markdown")
+
+# gem2rds.R from BGI
+install.packages("raster")
+install.packages("rgdal")
+
 print("Installed R packages")

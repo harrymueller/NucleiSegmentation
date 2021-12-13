@@ -131,3 +131,4 @@ dmypy.json
 # CUSTOM
 docker/start.sh
 docker/build.sh
+notes.txt

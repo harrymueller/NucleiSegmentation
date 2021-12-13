@@ -1,15 +1,15 @@
 #!/bin/bash
-DIR=`pwd`/logs
+DIR=`pwd`/st_barcodemap_4
 # TODO if files exist, delete
 # TODO detect earlier stopping and kill processes
-rm $DIR/$1_log.out $DIR/$1_usage.txt
+rm $DIR/log.out $DIR/usage.txt
 
 # run program via nohup
-nohup $@ > $DIR/$1_log.out 2>&1 &
+nohup $@ > $DIR/log.out 2>&1 &
 PID=$!
 
 # start pidstat
-nohup pidstat -h -r -u -p $PID 1 --human > $DIR/$1_usage.txt 2>&1 &
+nohup pidstat -h -r -u -p $PID 1 --human > $DIR/usage.txt 2>&1 &
 PIDSTAT=$!
 
 echo "#########################################"
@@ -17,7 +17,7 @@ echo "# PID = $PID | PIDSTAT = $PIDSTAT"
 echo "#########################################"
 
 # tail logs of program
-tail -f -n +0 $DIR/$1_log.out &
+tail -f -n +0 $DIR/log.out &
 wait $PID
 
 # when finished -> analyse data
@@ -29,4 +29,4 @@ echo "# Finished main execution, analysing... "
 echo "#########################################"
 
 # print results
-python extract_stats.py "$@" $DIR/$1_usage.txt $DIR/$1_stats.txt
+python3 /mnt/local/TongueSTOmics/usage/extract_stats.py "$@" $DIR/usage.txt $DIR/stats.txt

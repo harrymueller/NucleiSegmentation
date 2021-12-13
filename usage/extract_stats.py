@@ -60,7 +60,7 @@ def get_usage(usage_path):
 
 		for l in lines:
 			if (l != "\n" and l[0] != "#" and l[0] != "L"):
-				usage.append(l.replace("\n", "").split())
+				usage.append(l.replace("\n", "").replace(" AM", "AM").replace(" PM", "PM").split())
 		
 	# converting to pandas df and selecting only important columns
 	usage = pd.DataFrame(usage[1:], columns=usage[0])
@@ -104,15 +104,16 @@ def print_stats(cmd, usage_stats, output):
 	out = "Time: \t\t{}\nMax CPU: \t{}%\nAvg. CPU: \t{}%\nMax RAM: \t{}GB\nAvg. RAM: \t{}GB".format(
 		str(usage_stats["time"]).split(" ")[-1], # may have problems if processes > day
 		usage_stats["cpu_max"],
-		usage_stats["cpu_avg"],
-		round(usage_stats["ram_max"], 5),
-		round(usage_stats["ram_avg"], 5)
+		round(usage_stats["cpu_avg"], 1),
+		round(usage_stats["ram_max"], 1),
+		round(usage_stats["ram_avg"], 1)
 	)
 	out = "> {}\n{}".format(cmd,out)
 	with open(output, "w") as f:
 		f.write(out)
 
 	print(out)
+	print("\n")
 
 ####################################
 # saving df to file
