@@ -15,12 +15,12 @@ TONGUE_ID = argv$id
 
 # other consts
 if (F) {
-  INPUT_DIR = "/mnt/data"
-  OUTPUT_DIR = sprintf("/mnt/data/tongue_STOmics/discovery/umap_clusters/%s", TONGUE_ID)
-  source("/mnt/data/scripts/rscripts/accurate_plot.R")
+  INPUT_DIR = "/data/tongue"
+  OUTPUT_DIR = "/data/tongue/umap_clusters"
+  source("/data/tongue/scripts/rscripts/accurate_plot.R")
 } else {
   INPUT_DIR = "/mnt/data/tongue_STOmics/discovery"
-  OUTPUT_DIR = sprintf("/mnt/data/tongue_STOmics/discovery/umap_clusters")
+  OUTPUT_DIR = "/mnt/data/tongue_STOmics/discovery/umap_clusters"
   source("/mnt/local/scripts/rscripts/accurate_plot.R")
 }
 if (!dir.exists(OUTPUT_DIR)) dir.create(OUTPUT_DIR)
@@ -30,27 +30,34 @@ options = list(
     list("NormalizeData", "dimReducedRDS", c(20, 50, 100), c(0.5,0.5,0.5)),
     list("SCTransform", "scDimReducedRDS", c(50, 100), c(0.5, 0.5))
 )
-
+if (F) {
+    options = list(
+        list("NormalizeData", "dimReducedRDS", c(100), c(0.5)),
+        list("SCTransform", "scDimReducedRDS", c(100), c(0.5))
+    )
+}
 for (reduction in options) {
     bins = reduction[[3]]
     res = reduction[[4]]
     output = paste0(OUTPUT_DIR, "/", reduction[[1]])
     if (!dir.exists(output)) dir.create(output)
-    
+
     for (i in seq(length(reduction[[3]]))) {
         # read in RDS
-        INPUT = sprintf("%s/%s/%s_bin%s_red.rds", INPUT_DIR, reduction[[2]], TONGUE_ID, bins[i])
+        INPUT = sprintf("%s/%s/%s_bin%s_red.Rds", INPUT_DIR, reduction[[2]], TONGUE_ID, bins[i])
         obj = readRDS(INPUT)
         
         obj <- FindClusters(obj, resolution = res[i])
-        p1 <- DimPlot(obj, reduction = "umap", label = TRUE)
-        p2 <- SpatialDimPlot(obj, label = TRUE, label.size = 3, image.alpha = 0)
+        p1 <- DimPlot(obj, reduction = "umap", label = TRUE, pt.size = 1)
+        p2 <- SpatialDimPlot(obj)
 
         accurate_plot(
             p2$data,
             filename = sprintf("%s/%s_bin%s.png", output, TONGUE_ID, bins[i]),
-            legend_name = sprintf("%s\n%s\n%s", reduction[[1]], TONGUE_ID, bins[i]),
-            left_plot = p1
+            legend_name = sprintf("%s\n%s\nbin%s", reduction[[1]], TONGUE_ID, bins[i]),
+            left_plot = p1,
+            dpi = 500,
+            minres = 1000
         )
     }
 }
