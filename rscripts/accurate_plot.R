@@ -51,12 +51,12 @@ accurate_plot <- function (data, # dataframe with y,x,value
     p = p + scale_fill_gradientn(colours=custom_colours)
   
   if (!left_plot) {
-    ggsave(filename, p, height=height, width=width + legend_space*2, dpi=dpi)
+    ggsave(filename, p, height=height, width=width + legend_space*2, dpi=dpi, limitsize = FALSE)
     
     if (crop) system(sprintf("convert %s -trim +repage %s", filename, filename))
   } else {
-    ggsave(paste0(filename, ".TEMP"), p, height = height, width = width + legend_space * 2, dpi = dpi)
-    ggsave(filename, left_plot, height = height, width = width + legend_space * 2, dpi = dpi)
+    ggsave(paste0(filename, ".TEMP"), p, height = height, width = width + legend_space * 2, dpi = dpi, limitsize = FALSE)
+    ggsave(filename, left_plot, height = height, width = width + legend_space * 2, dpi = dpi, limitsize = FALSE)
 
     # crop accurate plot
     #system(sprintf("convert %s -trim +repage %s", filename, filename))

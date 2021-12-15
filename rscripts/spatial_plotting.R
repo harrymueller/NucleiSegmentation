@@ -33,9 +33,9 @@ colours = c("white",rev(brewer.pal(n = 11, name = "Spectral")))
 for (t in c("nCount_Spatial", "nFeature_Spatial", "Malat1", "Neat1")) {
   p = VlnPlot(obj, features = t, pt.size = 0.05) + NoLegend()
   isGene = t %in% c("Malat1", "Neat1")
-  accurate_plot(SpatialPlot(obj, features = "nCount_Spatial")$data, 
-                filename = paste0(OUTPUT_DIR, "/nCount_Spatial.png"), 
-                legend_name = paste0("nCounts", ifelse(isGene, "", " (q0.99999)")),
+  accurate_plot(SpatialPlot(obj, features = t)$data, 
+                filename = paste0(OUTPUT_DIR, "/", t, ".png"), 
+                legend_name = paste0(t, ifelse(isGene, "", " (q0.99999)")),
                 adjust = ifelse(isGene, 1, 0.9999),
                 custom_colours = colours,
                 left_plot = p)
