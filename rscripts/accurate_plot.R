@@ -7,7 +7,7 @@ accurate_plot <- function (data, # dataframe with y,x,value
                            crop = FALSE, # whether to crop the image using ImageMagick
                            adjust = 1, # whether to limit to a given quantile (1 = no)
                            custom_colours = c(), # vector of colours
-                           left_plot = FALSE # ggplot obj to plot the left of this
+                           left_plot = NULL # ggplot obj to plot the left of this
                            ) {
   names(data) = c("y", "x", "values")
   
@@ -50,7 +50,7 @@ accurate_plot <- function (data, # dataframe with y,x,value
   if (length(custom_colours) > 0)
     p = p + scale_fill_gradientn(colours=custom_colours)
   
-  if (!left_plot) {
+  if (!is.null(left_plot)) {
     ggsave(filename, p, height=height, width=width + legend_space*2, dpi=dpi, limitsize = FALSE)
     
     if (crop) system(sprintf("convert %s -trim +repage %s", filename, filename))
