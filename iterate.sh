@@ -7,9 +7,10 @@ BINS=(1 10 20 50 100)
 
 for ID in "${TONGUE_IDS[@]}"; do
     for BIN in "${BINS[@]}"; do
-        Rscript $SCRIPT_PATH \
+        echo "Starting $ID $BIN"
+	Rscript $SCRIPT_PATH \
             --binsize $BIN \
             --id $ID
-        echo "Completed $BIN $ID"
+        echo "Completed $ID $BIN"
     done
 done

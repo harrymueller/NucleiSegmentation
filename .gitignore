@@ -132,3 +132,4 @@ dmypy.json
 docker/start.sh
 docker/build.sh
 notes.txt
+*.out
