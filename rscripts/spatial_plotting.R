@@ -16,9 +16,9 @@ BIN_SIZE = argv$binsize
 TONGUE_ID = argv$id
 
 # other consts
-INPUT_DIR = "/mnt/data/tongue_STOmics/discovery/gemRDS"
-OUTPUT_DIR = sprintf("/mnt/data/tongue_STOmics/discovery/count_feature_plots/%s_bin%s", TONGUE_ID, BIN_SIZE)
-source("/mnt/data/tongue_STOmics/scripts/rscripts/accurate_plot.R")
+INPUT_DIR = "/mnt/data/tongue/discovery/gemRDS"
+OUTPUT_DIR = sprintf("/mnt/data/tongue/discovery/count_feature_plots/%s_bin%s", TONGUE_ID, BIN_SIZE)
+source("/mnt/data/tongue/scripts/rscripts/accurate_plot.R")
 
 if (!dir.exists(OUTPUT_DIR)) dir.create(OUTPUT_DIR)
 
