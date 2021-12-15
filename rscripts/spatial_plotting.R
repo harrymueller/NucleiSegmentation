@@ -16,8 +16,8 @@ BIN_SIZE = argv$binsize
 TONGUE_ID = argv$id
 
 # other consts
-INPUT_DIR = "/mnt/data/discovery/gemRDS"
-OUTPUT_DIR = sprintf("/mnt/data/discovery/count_feature_plots/%s_bin%s", TONGUE_ID, BIN_SIZE)
+INPUT_DIR = "/mnt/data/gemRDS"
+OUTPUT_DIR = sprintf("/mnt/data/count_feature_plots/%s_bin%s", TONGUE_ID, BIN_SIZE)
 source("/mnt/data/scripts/rscripts/accurate_plot.R")
 
 if (!dir.exists(OUTPUT_DIR)) dir.create(OUTPUT_DIR)
@@ -35,8 +35,8 @@ for (t in c("nCount_Spatial", "nFeature_Spatial", "Malat1", "Neat1")) {
   isGene = t %in% c("Malat1", "Neat1")
   accurate_plot(SpatialPlot(obj, features = "nCount_Spatial")$data, 
                 filename = paste0(OUTPUT_DIR, "/nCount_Spatial.png"), 
-                legend_name = paste0("nCounts", isGene ? "" : " (q0.99999)",
-                adjust = isGene ? 1 : 0.9999,
+                legend_name = paste0("nCounts", ifelse(isGene, "", " (q0.99999)")),
+                adjust = ifelse(isGene, 1, 0.9999),
                 custom_colours = colours,
                 left_plot = p)
   gc()
