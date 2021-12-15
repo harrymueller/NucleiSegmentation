@@ -16,8 +16,8 @@ accurate_plot <- function (data, # dataframe with y,x,value
   
   # diameter (in pixels) of 1 cell
   px = ceiling(minres/min(c(x,y)))
-  height = y / px / dpi * 100
-  width = x / px / dpi * 100
+  height = px * y / dpi
+  width = px * x / dpi
   
   legend_offset = (legend_space / 2) / width + 1
   
