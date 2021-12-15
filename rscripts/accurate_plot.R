@@ -7,7 +7,7 @@ accurate_plot <- function (data, # dataframe with y,x,value
                            crop = FALSE, # whether to crop the image using ImageMagick
                            adjust = 1, # whether to limit to a given quantile (1 = no)
                            custom_colours = c(), # vector of colours
-                           left_plot = NULL # ggplot obj to plot the left of this
+                           left_plot = c() # ggplot obj to plot the left of this
                            ) {
   names(data) = c("y", "x", "values")
   
@@ -49,21 +49,24 @@ accurate_plot <- function (data, # dataframe with y,x,value
   
   if (length(custom_colours) > 0)
     p = p + scale_fill_gradientn(colours=custom_colours)
-  
-  if (!is.null(left_plot)) {
+ 
+	print(left_plot)
+  if (length(x) == 0) {
     ggsave(filename, p, height=height, width=width + legend_space*2, dpi=dpi, limitsize = FALSE)
-    
     if (crop) system(sprintf("convert %s -trim +repage %s", filename, filename))
   } else {
-    ggsave(paste0(filename, ".TEMP"), p, height = height, width = width + legend_space * 2, dpi = dpi, limitsize = FALSE)
+    ggsave(paste0(filename, ".TEMP.png"), p, height = height, width = width + legend_space * 2, dpi = dpi, limitsize = FALSE)
+    
     ggsave(filename, left_plot, height = height, width = width + legend_space * 2, dpi = dpi, limitsize = FALSE)
 
     # crop accurate plot
     #system(sprintf("convert %s -trim +repage %s", filename, filename))
-    system(sprintf("convert %s -trim +repage %s", paste0(filename, ".TEMP"), paste0(filename, ".TEMP")))
+    system(sprintf("convert %s -trim +repage %s", paste0(filename, ".TEMP.png"), paste0(filename, ".TEMP.png")))
 
     # merge then rm temp file
-    system(sprintf("convert %s %s +append %s", filename, paste0(filename, ".TEMP"), filename))
-    system(paste0("rm ", filename, ".TEMP"))
+    system(sprintf("convert %s %s +append %s", filename, paste0(filename, ".TEMP.png"), filename))
+    #system(paste0("rm ", filename, ".TEMP.png"))
+
+    system(sprintf("convert %s -trim +repage %s", filename, filename))
   }
 }

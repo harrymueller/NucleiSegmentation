@@ -38,7 +38,9 @@ for (t in c("nCount_Spatial", "nFeature_Spatial", "Malat1", "Neat1")) {
                 legend_name = paste0(t, ifelse(isGene, "", "\n(q0.99999)")),
                 adjust = ifelse(isGene, 1, 0.9999),
                 custom_colours = colours,
-                left_plot = left_plot)
+                left_plot = left_plot,
+  		dpi = 200,
+  		minres = 1000)
   gc()
 } 
 
