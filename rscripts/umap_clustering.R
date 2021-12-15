@@ -14,10 +14,10 @@ argv <- parse_args(args)
 TONGUE_ID = argv$id
 
 # other consts
-if (F) {
-  INPUT_DIR = "/data/tongue"
-  OUTPUT_DIR = "/data/tongue/umap_clusters"
-  source("/data/tongue/scripts/rscripts/accurate_plot.R")
+if (T) {
+  INPUT_DIR = "/mnt/data"
+  OUTPUT_DIR = "/mnt/data/umap_clusters"
+  source("/mnt/data/scripts/rscripts/accurate_plot.R")
 } else {
   INPUT_DIR = "/mnt/data/tongue_STOmics/discovery"
   OUTPUT_DIR = "/mnt/data/tongue_STOmics/discovery/umap_clusters"
