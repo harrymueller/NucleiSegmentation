@@ -16,14 +16,11 @@ BIN_SIZE = argv$binsize
 TONGUE_ID = argv$id
 
 # other consts
-INPUT_DIR = "/mnt/data/tongue/discovery/gemRDS"
-OUTPUT_DIR = sprintf("/mnt/data/tongue/discovery/count_feature_plots/%s_bin%s", TONGUE_ID, BIN_SIZE)
-source("/mnt/data/tongue/scripts/rscripts/accurate_plot.R")
+INPUT_DIR = "/mnt/data/discovery/gemRDS"
+OUTPUT_DIR = sprintf("/mnt/data/discovery/count_feature_plots/%s_bin%s", TONGUE_ID, BIN_SIZE)
+source("/mnt/data/scripts/rscripts/accurate_plot.R")
 
 if (!dir.exists(OUTPUT_DIR)) dir.create(OUTPUT_DIR)
-
-# takes SpatialPlot data from seurat and saves it to a file
-
 
 # read in RDS
 INPUT = sprintf("%s/%s_bin%s_spatialObj.rds", INPUT_DIR, TONGUE_ID, BIN_SIZE)
