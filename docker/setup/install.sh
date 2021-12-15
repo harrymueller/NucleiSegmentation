@@ -106,9 +106,13 @@ cd ~/tools
 git clone https://github.com/BGIResearch/SAW.git
 
 ##############################
-# R raster
+# others
 ##############################
+# R raster
 apt-get install libudunits2-dev libgdal-dev libgeos-dev libproj-dev libxt-dev -y
+
+# imagemagick
+apt-get install imagemagick -y
 
 ##############################
 # Finished

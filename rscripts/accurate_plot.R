@@ -41,7 +41,7 @@ accurate_plot <- function (data, # dataframe with y,x,value
             panel.border=element_blank(),
             panel.grid.major=element_blank(),
             panel.grid.minor=element_blank(),
-            plot.background=element_blank(),
+            plot.background=element_rect(fill="white"), # white background
             legend.position = c(legend_offset, 0.5),
             plot.margin=grid::unit(c(0,0,0,0), "mm"))
   
@@ -49,24 +49,23 @@ accurate_plot <- function (data, # dataframe with y,x,value
   
   if (length(custom_colours) > 0)
     p = p + scale_fill_gradientn(colours=custom_colours)
- 
-	print(left_plot)
   if (length(x) == 0) {
     ggsave(filename, p, height=height, width=width + legend_space*2, dpi=dpi, limitsize = FALSE)
     if (crop) system(sprintf("convert %s -trim +repage %s", filename, filename))
-  } else {
-    ggsave(paste0(filename, ".TEMP.png"), p, height = height, width = width + legend_space * 2, dpi = dpi, limitsize = FALSE)
-    
-    ggsave(filename, left_plot, height = height, width = width + legend_space * 2, dpi = dpi, limitsize = FALSE)
+  } else { 
+    temp_filename = stringr::str_replace(filename, ".png", ".TEMP.png")
 
-    # crop accurate plot
-    #system(sprintf("convert %s -trim +repage %s", filename, filename))
-    system(sprintf("convert %s -trim +repage %s", paste0(filename, ".TEMP.png"), paste0(filename, ".TEMP.png")))
+    # save as images -> ensures correct aspect ratio for spatial plots
+    ggsave(temp_filename, p, height = height, width = width + legend_space * 2, dpi = dpi, limitsize = FALSE)
+    ggsave(filename, left_plot, height = height / 0.8, width = (width + legend_space * 1.5) / 0.8, dpi = dpi*0.8, limitsize = FALSE)
+
+    # crop
+    system(sprintf("convert -crop %sx%s+%s+%s +repage %s %s", (width + legend_space * 1.2) * dpi, (height) * dpi, legend_space*0.8*dpi, 0, temp_filename, temp_filename))
 
     # merge then rm temp file
-    system(sprintf("convert %s %s +append %s", filename, paste0(filename, ".TEMP.png"), filename))
-    #system(paste0("rm ", filename, ".TEMP.png"))
+    system(sprintf("convert %s %s +append %s", filename, temp_filename, filename))
+    system(paste0("rm ", temp_filename))
 
-    system(sprintf("convert %s -trim +repage %s", filename, filename))
+    #system(sprintf("convert %s -trim +repage %s", filename, filename))
   }
 }
