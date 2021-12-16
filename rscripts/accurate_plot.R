@@ -7,8 +7,9 @@ accurate_plot <- function (data, # dataframe with y,x,value
                            crop = FALSE, # whether to crop the image using ImageMagick
                            adjust = 1, # whether to limit to a given quantile (1 = no)
                            custom_colours = c(), # vector of colours
-                           left_plot = c() # ggplot obj to plot the left of this
-                           ) {
+                           left_plot = c(), # ggplot obj to plot the left of this
+                           black_background = FALSE # whether to plot over a black background
+                          ) {
   names(data) = c("y", "x", "values")
   
   x = max(data$x)+1
@@ -25,6 +26,8 @@ accurate_plot <- function (data, # dataframe with y,x,value
     q = quantile(data[[3]], probs = adjust)
     data[[3]][data[[3]] > q] = q
   }
+
+  background = element_rect(fill=ifelse(black_background, "black", "white"))
   
   p = ggplot(data=data, mapping=aes(x=x, y = y)) + 
       geom_raster(aes(fill=values), hjust=0, vjust=0) +
@@ -41,9 +44,10 @@ accurate_plot <- function (data, # dataframe with y,x,value
             panel.border=element_blank(),
             panel.grid.major=element_blank(),
             panel.grid.minor=element_blank(),
-            plot.background=element_rect(fill="white"), # white background
+            plot.background=background,
+            plot.margin=grid::unit(c(0,0,0,0), "mm"),
             legend.position = c(legend_offset, 0.5),
-            plot.margin=grid::unit(c(0,0,0,0), "mm"))
+            legend.background = element_rect(fill="white"))
   
   p$labels$fill <- legend_name
   
@@ -58,7 +62,7 @@ accurate_plot <- function (data, # dataframe with y,x,value
     # save as images -> ensures correct aspect ratio for spatial plots
     ggsave(temp_filename, p, height = height, width = width + legend_space * 2, dpi = dpi, limitsize = FALSE)
     ggsave(filename, left_plot, height = height / 0.8, width = (width + legend_space * 1.5) / 0.8, dpi = dpi*0.8, limitsize = FALSE)
-	return()
+
     # crop
     system(sprintf("convert -crop %sx%s+%s+%s +repage %s %s", (width + legend_space * 1.2) * dpi, (height) * dpi, legend_space*0.8*dpi, 0, temp_filename, temp_filename))
 
