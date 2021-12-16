@@ -19,11 +19,11 @@ TONGUE_ID = argv$id
 if (T) {
   INPUT_DIR = "/mnt/data/gemRDS"
   OUTPUT_DIR = sprintf("/mnt/data/count_feature_plots/%s_bin%s", TONGUE_ID, BIN_SIZE)
-  source("/mnt/data/scripts/rscripts/accurate_plot.R")
+  source("/mnt/data/scripts/rscripts/functions/accurate_plot.R")
 } else {
   INPUT_DIR = "/mnt/data/tongue_STOmics/discovery/gemRDS"
   OUTPUT_DIR = sprintf("/mnt/data/tongue_STOmics/discovery/count_feature_plots/%s_bin%s", TONGUE_ID, BIN_SIZE)
-  source("/mnt/local/scripts/rscripts/accurate_plot.R")
+  source("/mnt/local/scripts/rscripts/functions/accurate_plot.R")
 }
 if (!dir.exists(OUTPUT_DIR)) dir.create(OUTPUT_DIR)
 

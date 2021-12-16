@@ -17,11 +17,11 @@ TONGUE_ID = argv$id
 if (T) {
   INPUT_DIR = "/mnt/data"
   OUTPUT_DIR = "/mnt/data/umap_clusters"
-  source("/mnt/data/scripts/rscripts/accurate_plot.R")
+  source("/mnt/data/scripts/rscripts/functions/accurate_plot.R")
 } else {
   INPUT_DIR = "/mnt/data/tongue_STOmics/discovery"
   OUTPUT_DIR = "/mnt/data/tongue_STOmics/discovery/umap_clusters"
-  source("/mnt/local/scripts/rscripts/accurate_plot.R")
+  source("/mnt/local/scripts/rscripts/functions/accurate_plot.R")
 }
 if (!dir.exists(OUTPUT_DIR)) dir.create(OUTPUT_DIR)
 
