@@ -27,13 +27,13 @@ if (!dir.exists(OUTPUT_DIR)) dir.create(OUTPUT_DIR)
 
 # name, folder, binsizes, resolution
 options = list(
-    list("NormalizeData", "dimReducedRDS", c(20, 50, 100), c(0.5,0.5,0.5)),
-    list("SCTransform", "scDimReducedRDS", c(50, 100), c(0.5, 0.5))
+    list("NormalizeData", "dimReducedRDS", c(100, 50, 20), c(0.5,0.5,0.5)),
+    list("SCTransform", "scDimReducedRDS", c(100, 50), c(0.5, 0.5))
 )
-if (F) {
+if (T) {
     options = list(
-        list("NormalizeData", "dimReducedRDS", c(100), c(0.5)),
-        list("SCTransform", "scDimReducedRDS", c(100), c(0.5))
+        list("NormalizeData", "dimReducedRDS", c(20), c(0.3)),
+        list("SCTransform", "scDimReducedRDS", c(50), c(0.4))
     )
 }
 for (reduction in options) {

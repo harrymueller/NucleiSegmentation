@@ -3,6 +3,7 @@
 # $1 relative to rscripts dir
 nohup docker run -v /data/tongue:/mnt/data \
     tonguediscovery \
-    bash /mnt/data/scripts/docker/iterate.sh /mnt/data/scripts/rscripts/$1 \
+    bash /mnt/data/scripts/docker/iterate.sh \
+    /mnt/data/scripts/rscripts/$1 /mnt/data/scripts/rscripts/$2 \
     > log.out &
 tail -f log.out

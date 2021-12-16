@@ -16,7 +16,7 @@ BIN_SIZE = argv$binsize
 TONGUE_ID = argv$id
 
 # other consts
-if (F) {
+if (T) {
   INPUT_DIR = "/mnt/data/gemRDS"
   OUTPUT_DIR = sprintf("/mnt/data/count_feature_plots/%s_bin%s", TONGUE_ID, BIN_SIZE)
   source("/mnt/data/scripts/rscripts/accurate_plot.R")
