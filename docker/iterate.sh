@@ -8,7 +8,7 @@ BINS=(1) # 10 20 50 100)
 #BINS=(100)
 apt-get install imagemagick -y
 for ID in "${TONGUE_IDS[@]}"; do
-    Rscript $2 --id $ID
+    #Rscript $2 --id $ID
     for BIN in "${BINS[@]}"; do
         echo "Starting $ID $BIN"
 	    Rscript $SCRIPT_PATH \

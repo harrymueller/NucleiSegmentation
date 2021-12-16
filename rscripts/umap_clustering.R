@@ -32,8 +32,8 @@ options = list(
 )
 if (T) {
     options = list(
-        list("NormalizeData", "dimReducedRDS", c(20), c(0.3)),
-        list("SCTransform", "scDimReducedRDS", c(50), c(0.4))
+        list("NormalizeData", "dimReducedRDS", c(20), c(0.1))#,
+        #list("SCTransform", "scDimReducedRDS", c(50), c(0.3))
     )
 }
 for (reduction in options) {
