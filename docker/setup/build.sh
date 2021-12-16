@@ -1,2 +1,2 @@
 #!/bin/bash
-docker build --no-cache -t tonguediscovery . 
+docker build --no-cache -t test . 

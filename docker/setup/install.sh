@@ -8,13 +8,6 @@ apt-get install git build-essential vim wget apt-utils systemctl tmux htop sysst
 mkdir ~/tools && cd ~/tools 
 
 ##############################
-# Aliases
-##############################
-cat aliases >> /root/.bashrc
-cat aliases >> /home/rstudio/.bashrc
-source ~/.bashrc
-
-##############################
 # 00 ST_BarcodeMap v1.0: https://github.com/BGIResearch/ST_BarcodeMap
 ##############################
 apt-get install libboost-thread-dev zlibc libhdf5-serial-dev -y # dependencies
