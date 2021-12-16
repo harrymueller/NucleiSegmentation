@@ -55,7 +55,7 @@ source ~/.bashrc
 ##############################
 # 03.1 Rstudio Working Directory config
 ##############################
-RS_PATH=/mnt/local/rstudio
+RS_PATH=/mnt/data/rstudio
 echo "session-default-working-dir=$RS_PATH" >> /etc/rstudio/rsession.conf
 echo "session-default-new-project-dir=$RS_PATH" >> /etc/rstudio/rsession.conf
 
