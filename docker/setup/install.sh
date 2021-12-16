@@ -107,6 +107,9 @@ apt-get install libudunits2-dev libgdal-dev libgeos-dev libproj-dev libxt-dev -y
 # imagemagick
 apt-get install imagemagick -y
 
+# java
+apt-get install openjdk-17-jdk -y
+
 ##############################
 # Finished
 ##############################
@@ -116,4 +119,4 @@ echo "Finished installing all packages."
 echo "##############################"
 
 
-export LD_LIBRARY_PATH=/lib:/usr/lib:/usr/local/lib
+export LD_LIBRARY_PATH=/lib:/usr/lib:/usr/local/lib:/usr/lib/jvm/jre/lib/amd64:/usr/lib/jvm/jre/lib/amd64/default

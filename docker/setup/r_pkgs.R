@@ -32,4 +32,8 @@ install.packages("raster")
 install.packages("rgdal")
 install.packages("argparser")
 
+# markers
+install.packages("rJava")
+install.packages("xlsx")
+
 print("Installed R packages")
