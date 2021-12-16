@@ -1,25 +1,25 @@
-# from ubuntu image
-#FROM ubuntu
+# from rstudio-server image
 FROM rocker/rstudio
 
 # update apt
 RUN apt-get update
 
-# copy scripts req. for docker
-#COPY install.sh . 
-#COPY r_pkgs.R .
+# copy scripts to /install dir
+RUN mkdir /install
+COPY aliases /install
+COPY install.sh /install
+COPY r_pkgs.R /install
 
 # add aliases
-RUN cat aliases >> ~/.bashrc
-RUN cat aliases >> /home/rstudio/.bashrc
+RUN cat /install/aliases >> ~/.bashrc
+RUN cat /install/aliases >> /home/rstudio/.bashrc
 
 # ensure apt is not interactive
 ARG DEBIAN_FRONTEND=noninteractive
 
-# run install script
-RUN ./install.sh --noninteractive
-RUN Rscript r_pkgs.R
+# run install scripts
+RUN bash /install/install.sh
+RUN Rscript /install/r_pkgs.R
 
 # add rstudio user group to sudoers
 RUN usermod -aG sudo rstudio
-
