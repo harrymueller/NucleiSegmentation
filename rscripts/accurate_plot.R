@@ -58,7 +58,7 @@ accurate_plot <- function (data, # dataframe with y,x,value
     # save as images -> ensures correct aspect ratio for spatial plots
     ggsave(temp_filename, p, height = height, width = width + legend_space * 2, dpi = dpi, limitsize = FALSE)
     ggsave(filename, left_plot, height = height / 0.8, width = (width + legend_space * 1.5) / 0.8, dpi = dpi*0.8, limitsize = FALSE)
-
+	return()
     # crop
     system(sprintf("convert -crop %sx%s+%s+%s +repage %s %s", (width + legend_space * 1.2) * dpi, (height) * dpi, legend_space*0.8*dpi, 0, temp_filename, temp_filename))
 

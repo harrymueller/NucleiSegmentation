@@ -45,8 +45,8 @@ for (t in c("nCount_Spatial", "nFeature_Spatial", "Malat1", "Neat1")) {
                 adjust = ifelse(!isGene && BIN_SIZE <= 10, 0.9999, 1),
                 custom_colours = colours,
                 left_plot = left_plot,
-                dpi = 600,
-                minres = 1000)
+                dpi = 2000,
+                minres = 1)
   gc()
 } 
 
