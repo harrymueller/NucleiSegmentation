@@ -6,9 +6,12 @@ FROM rocker/rstudio
 RUN apt-get update
 
 # copy scripts req. for docker
-COPY install.sh . 
-COPY r_pkgs.R .
-COPY aliases .
+#COPY install.sh . 
+#COPY r_pkgs.R .
+
+# add aliases
+RUN cat aliases >> ~/.bashrc
+RUN cat aliases >> /home/rstudio/.bashrc
 
 # ensure apt is not interactive
 ARG DEBIAN_FRONTEND=noninteractive
@@ -17,7 +20,6 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN ./install.sh --noninteractive
 RUN Rscript r_pkgs.R
 
+# add rstudio user group to sudoers
 RUN usermod -aG sudo rstudio
 
-#ENV USER="rstudio"
-#CMD ["/usr/lib/rstudio-server/bin/rserver", "--server-daemonize", "0", "--auth-none", "1"]
