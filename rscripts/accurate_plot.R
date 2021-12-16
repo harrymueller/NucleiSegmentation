@@ -53,7 +53,7 @@ accurate_plot <- function (data, # dataframe with y,x,value
   
   if (length(custom_colours) > 0)
     p = p + scale_fill_gradientn(colours=custom_colours)
-  if (length(x) == 0) {
+  if (length(left_plot) == 0) {
     ggsave(filename, p, height=height, width=width + legend_space*2, dpi=dpi, limitsize = FALSE)
     if (crop) system(sprintf("convert %s -trim +repage %s", filename, filename))
   } else { 
