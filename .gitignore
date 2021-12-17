@@ -133,3 +133,6 @@ docker/start.sh
 docker/build.sh
 notes.txt
 *.out
+
+*.png
+*.tif
