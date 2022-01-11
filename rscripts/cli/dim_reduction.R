@@ -21,16 +21,21 @@ obj = readRDS(INPUT)
 if (METHOD == "SCT") {
     OUTPUT = sprintf("/mnt/data/scDimReducedRDS/%s_bin%s_red.Rds", TONGUE_ID, BIN_SIZE)
     obj <- SCTransform(obj, assay = "Spatial", verbose = FALSE)
+
+    obj <- RunPCA(obj, assay = "SCT", verbose = FALSE)
 } else if (METHOD == "LN") {
     OUTPUT = sprintf("/mnt/data/dimReducedRDS/%s_bin%s_red.Rds", TONGUE_ID, BIN_SIZE)
     obj <- NormalizeData(obj, assay = "Spatial", verbose = FALSE)
+
+    obj <- FindVariableFeatures(obj, selection.method = "vst", nfeatures = 2000)
+    obj <- ScaleData(obj, verbose = FALSE)
+    obj <- RunPCA(obj, assay = "Spatial", verbose = FALSE)
 } else {
     sprintf("Unrecognised parameter for --method: %s. Use SCT or LN", METHOD)
     exit()
 }
 
 # dimension reduction
-obj <- RunPCA(obj, assay = "SCT", verbose = FALSE)
 obj <- FindNeighbors(obj, reduction = "pca", dims = 1:30)
 obj <- FindClusters(obj, verbose = FALSE)
 obj <- RunUMAP(obj, reduction = "pca", dims = 1:30)
