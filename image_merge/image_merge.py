@@ -1,11 +1,17 @@
 import sys, os, math
 
-path = "tifs"
+path = "bin1"
 images = [
     "",
     path + "/Mouse-tongue-5-HE-previous section(Library Construction)_edited.tif",
     path + "/FP200000495BR_E5_edited.tif",
     path + "/Mouse-tongue-5-HE-next section(Library Construction)_edited.tif"
+]
+images = [
+    "",
+    "tifs/FP200000495BR_E5_edited.tif",
+    path + "/Malat1_spatial.png",
+    path + "/Neat1_spatial.png"
 ]
 names = [
     "",
