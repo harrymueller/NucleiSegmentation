@@ -30,8 +30,8 @@ options = list(
 )
 if (T) {
     options = list(
-        list("NormalizeData", "dimReducedRDS", c(30), c(0.2))#,
-        #list("SCTransform", "scDimReducedRDS", c(50), c(0.3))
+        #list("SCTransform", "dimReducedRDS", c(30), c(0.2))#,
+        list("NormalizeData", "dimReducedRDS", c(10), c(0.005))
     )
 }
 for (reduction in options) {
@@ -66,7 +66,7 @@ for (reduction in options) {
             accurate_plot(
                 p2$data,
                 filename = sprintf("%s/%s_bin%s_subset%s.png", output, TONGUE_ID, bins[i], DIAMETER),
-                legend_name = sprintf("%s\n%s\nbin%s_subset%s", reduction[[1]], TONGUE_ID, bins[i], DIAMETER),
+                legend_name = sprintf("%s\n%s\nbin%s\nsubset%s", reduction[[1]], TONGUE_ID, bins[i], DIAMETER),
                 left_plot = p1,
                 dpi = 500,
                 minres = 1000
