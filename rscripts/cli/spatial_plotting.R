@@ -51,8 +51,8 @@ for (t in c("nCount_Spatial", "nFeature_Spatial", "Malat1", "Neat1")) {
                   adjust = ifelse(!isGene && BIN_SIZE <= 10, 0.9999, 1),
                   custom_colours = colours,
                   left_plot = left_plot,
-                  dpi = 300,
-                  minres = 300)
+                  dpi = 150,
+                  minres = 150)
   } else {
     # plot vln and spatial plot separately for bin <= 2
     left_plot = VlnPlot(obj, features = t, pt.size = 0.05) + NoLegend()

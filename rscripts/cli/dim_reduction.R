@@ -19,10 +19,10 @@ DIAMETER = argv$diameter
 
 
 if (is.null(DIAMETER)) {
-  DIR = "/mnt/data/gemRDS"
+  INPUT_DIR = "/mnt/data/gemRDS"
   INPUT = sprintf("%s/%s_bin%s_spatialObj.rds", INPUT_DIR, TONGUE_ID, BIN_SIZE)
 } else {
-  DIR = "/mnt/data/subsets"
+  INPUT_DIR = "/mnt/data/subsets"
   INPUT = sprintf("%s/%s_bin%s_subset%s.rds", INPUT_DIR, TONGUE_ID, BIN_SIZE, DIAMETER)
 }
 
