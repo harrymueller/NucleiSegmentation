@@ -10,25 +10,31 @@ library(argparser)
 args <- arg_parser("Plotting nCount, nFeature, Malat1 and Neat1 violin and spatial plots.")
 args <- add_argument(args, "--binsize", help = "Bin Size")
 args <- add_argument(args, "--id", help = "Tongue ID")
+args <- add_argument(args, "--diameter", help="if subsetting, supply the diameter", default=NULL)
 argv <- parse_args(args)
 
-BIN_SIZE = argv$binsize
+BIN_SIZE  = argv$binsize
 TONGUE_ID = argv$id
+DIAMETER  = argv$diameter
 
 # other consts
-if (T) {
+OUTPUT_DIR = sprintf("/mnt/data/count_feature_plots/%s_bin%s", TONGUE_ID, BIN_SIZE)
+if (is.null(DIAMETER)) {
   INPUT_DIR = "/mnt/data/gemRDS"
-  OUTPUT_DIR = sprintf("/mnt/data/count_feature_plots/%s_bin%s", TONGUE_ID, BIN_SIZE)
-  source("/mnt/data/scripts/rscripts/functions/accurate_plot.R")
 } else {
-  INPUT_DIR = "/mnt/data/tongue_STOmics/discovery/gemRDS"
-  OUTPUT_DIR = sprintf("/mnt/data/tongue_STOmics/discovery/count_feature_plots/%s_bin%s", TONGUE_ID, BIN_SIZE)
-  source("/mnt/local/scripts/rscripts/functions/accurate_plot.R")
+  INPUT_DIR = "/mnt/data/subsets"
+  OUTPUT_DIR = sprintf("%s_subset%s", OUTPUT_DIR, DIAMETER)
 }
+source("/mnt/data/scripts/rscripts/functions/accurate_plot.R")
+  
 if (!dir.exists(OUTPUT_DIR)) dir.create(OUTPUT_DIR)
 
 # read in RDS
-INPUT = sprintf("%s/%s_bin%s_spatialObj.rds", INPUT_DIR, TONGUE_ID, BIN_SIZE)
+if (is.null(DIAMETER)) {
+  INPUT = sprintf("%s/%s_bin%s_spatialObj.rds", INPUT_DIR, TONGUE_ID, BIN_SIZE)
+} else {
+  INPUT = sprintf("%s/%s_bin%s_subset%s.rds", INPUT_DIR, TONGUE_ID, BIN_SIZE, DIAMETER)
+}
 obj = readRDS(INPUT)
 
 # plots

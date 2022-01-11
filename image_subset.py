@@ -32,12 +32,12 @@ out[mask == 255] = im[mask==255]
 
 if len(sys.argv) == 4:
     # write image
-    cv2.imwrite("%s/%s_subset_%d.%s" % (output_dir, filename.split(".")[0], num_bins, filename.split(".")[-1]), out)
+    cv2.imwrite(("%s/%s_subset%d.%s" % (output_dir, filename.split(".")[0], num_bins, filename.split(".")[-1])).replace("UMIGreyScaleFakeIMG_", ""), out)
 
     x = np.where(out != 0)
     x = np.column_stack(x)
 
-    f = open("%s/%s_subset_%d.tsv" % (output_dir, filename.split(".")[0], num_bins), "w")
+    f = open("%s/%s_subset%d.tsv" % (output_dir, filename.split(".")[0], num_bins), "w")
     f.write("y_coord\tx_coord\n")
     for i in x:
         f.write("%s\t%s\n" % (i[0], i[1]))
