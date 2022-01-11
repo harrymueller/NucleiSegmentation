@@ -38,10 +38,11 @@ if (METHOD == "SCT") {
 
     obj <- RunPCA(obj, assay = "SCT", verbose = FALSE)
 } else if (METHOD == "LN") {
-    if (!DIAMETER)
+    if (is.null(DIAMETER)) {
         OUTPUT = sprintf("/mnt/data/dimReducedRDS/%s_bin%s_red.Rds", TONGUE_ID, BIN_SIZE)
-    else
+    } else {
         OUTPUT = sprintf("/mnt/data/dimReducedRDS/%s_bin%s_subset%s_red.Rds", TONGUE_ID, BIN_SIZE, DIAMETER)
+    }
     
     obj <- NormalizeData(obj, assay = "Spatial", verbose = FALSE)
 
