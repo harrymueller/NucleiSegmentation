@@ -35,7 +35,6 @@ if (METHOD == "SCT") {
         OUTPUT = sprintf("/mnt/data/scDimReducedRDS/%s_bin%s_subset%s_red.Rds", TONGUE_ID, BIN_SIZE, DIAMETER)
     
     obj <- SCTransform(obj, assay = "Spatial", verbose = FALSE)
-
     obj <- RunPCA(obj, assay = "SCT", verbose = FALSE)
 } else if (METHOD == "LN") {
     if (is.null(DIAMETER)) {

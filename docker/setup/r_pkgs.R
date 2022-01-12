@@ -35,5 +35,6 @@ install.packages("argparser")
 # markers
 install.packages("rJava")
 install.packages("xlsx")
+install.packages('dplyr', repos = 'https://cloud.r-project.org')
 
 print("Installed R packages")
