@@ -18,7 +18,7 @@ METHOD = argv$method
 DIAMETER = argv$diameter
 
 
-if (is.null(DIAMETER)) {
+if (DIAMETER == 0) {
   INPUT_DIR = "/mnt/data/gemRDS"
   INPUT = sprintf("%s/%s_bin%s_spatialObj.rds", INPUT_DIR, TONGUE_ID, BIN_SIZE)
 } else {
@@ -29,7 +29,7 @@ if (is.null(DIAMETER)) {
 obj = readRDS(INPUT)    
 
 if (METHOD == "SCT") {
-    if (is.null(DIAMETER))
+    if (DIAMETER == 0)
         OUTPUT = sprintf("/mnt/data/scDimReducedRDS/%s_bin%s_red.Rds", TONGUE_ID, BIN_SIZE)
     else
         OUTPUT = sprintf("/mnt/data/scDimReducedRDS/%s_bin%s_subset%s_red.Rds", TONGUE_ID, BIN_SIZE, DIAMETER)
@@ -37,7 +37,7 @@ if (METHOD == "SCT") {
     obj <- SCTransform(obj, assay = "Spatial", verbose = FALSE)
     obj <- RunPCA(obj, assay = "SCT", verbose = FALSE)
 } else if (METHOD == "LN") {
-    if (is.null(DIAMETER)) {
+    if (DIAMETER == 0) {
         OUTPUT = sprintf("/mnt/data/dimReducedRDS/%s_bin%s_red.Rds", TONGUE_ID, BIN_SIZE)
     } else {
         OUTPUT = sprintf("/mnt/data/dimReducedRDS/%s_bin%s_subset%s_red.Rds", TONGUE_ID, BIN_SIZE, DIAMETER)
@@ -55,7 +55,6 @@ if (METHOD == "SCT") {
 
 # dimension reduction
 obj <- FindNeighbors(obj, reduction = "pca", dims = 1:30)
-obj <- FindClusters(obj, verbose = FALSE)
 obj <- RunUMAP(obj, reduction = "pca", dims = 1:30)
 
 # save new obj

@@ -37,4 +37,7 @@ install.packages("rJava")
 install.packages("xlsx")
 install.packages('dplyr', repos = 'https://cloud.r-project.org')
 
+# cell annotations
+BiocManager::install("celldex")
+
 print("Installed R packages")
