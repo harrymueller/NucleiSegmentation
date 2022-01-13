@@ -21,5 +21,8 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN bash /install/install.sh
 RUN Rscript /install/r_pkgs.R
 
+RUN export LD_LIBRARY_PATH=/lib:/usr/lib:/usr/local/lib:/usr/lib/jvm/jre/lib/amd64:/usr/lib/jvm/jre/lib/amd64/default
+RUN sudo R CMD javareconf
+
 # add rstudio user group to sudoers
 RUN usermod -aG sudo rstudio

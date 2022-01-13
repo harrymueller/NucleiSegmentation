@@ -117,6 +117,3 @@ echo ""
 echo "##############################"
 echo "Finished installing all packages."
 echo "##############################"
-
-
-export LD_LIBRARY_PATH=/lib:/usr/lib:/usr/local/lib:/usr/lib/jvm/jre/lib/amd64:/usr/lib/jvm/jre/lib/amd64/default
