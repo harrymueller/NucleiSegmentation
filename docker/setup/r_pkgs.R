@@ -14,6 +14,7 @@ BiocManager::install("SingleR")
 
 # scibet v1.0
 devtools::install_github("PaulingLiu/scibet")
+devtools::install_github("zwj-tina/scibetR") # pure R version for linux + windows
 
 # clusterProfiler v4.3.0 (report was v4.0.0)
 BiocManager::install("clusterProfiler")
@@ -39,6 +40,5 @@ install.packages('dplyr', repos = 'https://cloud.r-project.org')
 
 # cell annotations
 BiocManager::install("celldex")
-BiocManager::install("scRNAseq")
 
 print("Installed R packages")

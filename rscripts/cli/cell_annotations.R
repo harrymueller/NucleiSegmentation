@@ -42,12 +42,14 @@ if (!dir.exists(OUTPUT_DIR)) dir.create(OUTPUT_DIR)
 # FUNCTIONS
 ##############################
 singleR_annotations <- function (bUseMainLabels, bByClusters) {
-    if (bIsMain) {
+    # refdata labels to use
+    if (bUseMainLabels) {
         labels = RefData$label.main
     } else {
         labels = RefData$label.fine
     }
 
+    # ensure ident is seurat clusters
     Idents(obj) = "seurat_clusters"
 
     # ensure log-normalised counts
@@ -62,25 +64,79 @@ singleR_annotations <- function (bUseMainLabels, bByClusters) {
                     labels = labels)
     }
 
-    ggsave(paste0(OUTPUT_DIR, "/singleR_heatmap_", ifelse(bIsMain, "main", "fine"), "_", ifelse(bByClusters, "clusters", "cells"), ".png"), p, width = 10, height = 7)
+    # heatmap
+    p = plotScoreHeatmap(pred)
+    ggsave(paste0(OUTPUT_DIR, "/singleR_heatmap_", ifelse(bUseMainLabels, "main", "fine"), "_", ifelse(bByClusters, "clusters", "cells"), ".png"), p, width = 10, height = 7)
 
+    # labels
     annotation_label = paste("singleR", 
-                            ifelse(bIsMain, "main", "fine"), 
+                            ifelse(bUseMainLabels, "main", "fine"), 
                             ifelse(bByClusters, "clusters", "cells"), 
                             sep="_")
     if (bByClusters) {
-    obj@meta.data[[annotation_label]] = factor(unfactor(obj@meta.data$seurat_clusters), 
-                                                labels = pred$first.labels)
+        obj@meta.data[[annotation_label]] = factor(unfactor(obj@meta.data$seurat_clusters), 
+                                                   labels = pred$first.labels)
     } else {
-    obj@meta.data[[annotation_label]] = pred$first.labels
+        obj@meta.data[[annotation_label]] = pred$first.labels
     }
+
+    # umap
     Idents(obj) = annotation_label
-    
     p = DimPlot(obj)
-    ggsave(paste0(OUTPUT_DIR, "/singleR_umap_", ifelse(bIsMain, "main", "fine"), "_", ifelse(bByClusters, "clusters", "cells"), ".png"), p, width = 8, height = 8)
+    ggsave(paste0(OUTPUT_DIR, "/singleR_umap_", ifelse(bUseMainLabels, "main", "fine"), "_", ifelse(bByClusters, "clusters", "cells"), ".png"), p, width = 8, height = 8)
 
     return(obj)
 }
+
+scibet_annotations <- function (bUseMainLabels) {
+    train = as.data.frame(RefData@assays@data)
+    train[[1]] = NULL
+    train[[1]] = NULL
+
+    if (bUseMainLabels) {
+        refLabels = RefData$label.main
+        labelName = "scibet_main"
+    } else {
+        refLabels = RefData$label.fine
+        labelName = "scibet_fine"
+    }
+
+    # add labels
+    train = rbind(train, as.integer(as.factor(refLabels)))
+    rownames(train)[length(rownames(train))] = "label"
+
+    # train and test sets
+    train = as.data.frame(t(train))
+    test = as.data.frame(t(as.matrix(obj@assays$Spatial@data)))
+
+    # annotate cells
+    pred = SciBet_R(train, test)
+
+    # add labels to seurat obj
+    obj@meta.data$scibet = pred
+    labels = levels(factor(RefData$label.main))
+    for (i in seq(length(labels))) {
+        obj@meta.data$scibet[obj@meta.data$scibet == i] = labels[i]
+    }
+
+    # umap
+    Idents(obj) = "scibet"
+    p = DimPlot(obj)
+    ggsave(paste0(OUTPUT_DIR, "/scibet_umap_", ifelse(bIsMain, "main", "fine"), ".png"), p, width = 8, height = 8)
+
+    # dotpot
+    g = SelectGene_R(test, k = 30)
+    p = DotPlot(obj, features = g, assay = ASSAY_TO_USE, dot.scale = 3, cols="RdYlBu") + 
+            ggtitle(sprintf("Dot plot of 3 markers genes from each cluster\n%s_bin%s%s", 
+                            TONGUE_ID, BINSIZE, 
+                            ifelse(DIAMETER == 0, "", paste0("_subset",DIAMETER)))) + 
+            theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1, size = 14),
+                text = element_text(size = 17),
+                plot.background = element_rect(fill = "white"))
+    ggsave(paste0(OUTPUT_DIR, "/scibet_dotplot_", ifelse(bIsMain, "main", "fine"), ".png"), p, width = 9, height = 7)
+    return(obj)
+}
+
 
 ##############################
 # START
@@ -94,4 +150,6 @@ obj = singleR_annotations(T, T)
 #obj = singleR_annotations(F, F)
 #obj = singleR_annotations(F, T)
 
-saveRDS(obj, paste0(OUTPUT_DIR, "/singleR.rds"))
+obj = scibet_annotations(T)
+
+saveRDS(obj, paste0(OUTPUT_DIR, "/annotated_seurat.rds"))
