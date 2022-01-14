@@ -17,6 +17,7 @@ BIN_SIZE = argv$binsize
 METHOD = argv$method
 DIAMETER = argv$diameter
 
+METHOD_NAME = ifelse(METHOD == "SCT", "SCTransform", "NormalizeData")
 
 if (DIAMETER == 0) {
   INPUT_DIR = "/mnt/data/gemRDS"
@@ -30,9 +31,9 @@ obj = readRDS(INPUT)
 
 if (METHOD == "SCT") {
     if (DIAMETER == 0)
-        OUTPUT = sprintf("/mnt/data/scDimReducedRDS/%s_bin%s_red.Rds", TONGUE_ID, BIN_SIZE)
+        OUTPUT = sprintf("/mnt/data/dimReduction/%s/%s_bin%s_red.Rds", METHOD_NAME, TONGUE_ID, BIN_SIZE)
     else
-        OUTPUT = sprintf("/mnt/data/scDimReducedRDS/%s_bin%s_subset%s_red.Rds", TONGUE_ID, BIN_SIZE, DIAMETER)
+        OUTPUT = sprintf("/mnt/data/dimReduction/%s/%s_bin%s_subset%s_red.Rds", METHOD_NAME, TONGUE_ID, BIN_SIZE, DIAMETER)
     
     obj <- SCTransform(obj, assay = "Spatial", verbose = FALSE)
     obj <- RunPCA(obj, assay = "SCT", verbose = FALSE)

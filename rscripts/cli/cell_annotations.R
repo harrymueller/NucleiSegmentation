@@ -7,16 +7,36 @@ library(ggplot2)
 
 RefData = celldex::MouseRNAseqData()
 
+# params
 DIR = "/mnt/data"
 
-# to do multiple runs in 1 go
-DATA = data.frame(
-  "id"          = c("tongue-5"),
-  "binsize"     = c(50),
-  "res"         = c(0.4),
-  "norm_method" = c("SCTransform"),
-  "diameter"    = c(0)
-)
+# arg parsing
+library(argparser)
+args <- arg_parser("Cluster the seurat obj then plot a umap and spatial image")
+args <- add_argument(args, "--id", help="TONGUE_ID")
+args <- add_argument(args, "--binsize", help = "binsize")
+args <- add_argument(args, "--method", help="method of normalisation, SCT || LN")
+args <- add_argument(args, "--diameter", help="supply the diameter, 0 if not subsetting")
+args <- add_argument(args, "--resolution", help="seurat FindCluster resolution", default=0.5)
+argv <- parse_args(args)
+
+TONGUE_ID   = argv$id
+METHOD      = argv$method
+BINSIZE     = as.integer(argv$binsize)
+DIAMETER    = as.integer(argv$diameter)
+RESOLUTION  = as.double(argv$resolution)
+
+# other required variables
+METHOD_NAME = ifelse(METHOD == "SCT", "SCTransform", "NormalizeData")
+ASSAY_TO_USE = ifelse(METHOD == "SCT", "SCT", "Spatial")
+
+FOLDER_NAME = sprintf("%s_bin%s_subset%s_res%s", TONGUE_ID, BINSIZE, DIAMETER, RESOLUTION)
+FILENAME = paste0(FOLDER_NAME, ".rds")
+INPUT = paste0(DIR, "/umap_clusters/", METHOD_NAME, "/RDS/", FILENAME)
+
+# output dir
+OUTPUT_DIR = sprintf("%s/markers/%s/%s", DIR, METHOD_NAME, FOLDER_NAME)
+if (!dir.exists(OUTPUT_DIR)) dir.create(OUTPUT_DIR)
 
 ##############################
 # FUNCTIONS
@@ -28,47 +48,6 @@ singleR_annotations <- function (bUseMainLabels) {
 ##############################
 # START
 ##############################
-for (it in seq(1, length(rownames(DATA)))) {
-    current = DATA[it,]
-    print("##############################")
-    print(paste0(
-        "Starting ", current$id, "_bin", current$binsize, 
-        ifelse(current$diameter == 0, "", paste0("_subset",current$diameter)), " ..."
-    ))
-    print("##############################")
+# read file
+obj = readRDS(INPUT)
 
-    # create filenames
-    if (current$diameter == 0) { # not a subset
-        filename = sprintf("%s_bin%s_red.Rds", current$id, current$binsize)
-        folder_name = sprintf("%s_bin%s", current$id, current$binsize)
-    } else {
-        filename = sprintf("%s_bin%s_subset%s_red.Rds", current$id, current$binsize, current$diameter)
-        folder_name = sprintf("%s_bin%s_subset%s", current$id, current$binsize, current$diameter)
-    }
-
-    # output dir
-    output_dir = sprintf("%s/cell_annotations/%s", DIR, folder_name)
-    if (!dir.exists(output_dir)) dir.create(output_dir)
-
-    # read data
-    input = sprintf(
-        "%s/%s/%s", DIR, ifelse(current$norm_method == "SCTransform", "scDimReducedRDS", "dimReducedRDS"), filename
-    )
-    obj = readRDS(input)
-    
-    assay_to_use = ifelse(current$norm_method == "SCTransform", "SCT", "Spatial")
-
-    
-
-
-
-    # done
-    print("##############################")
-    print(paste0(
-        "Finished ", current$id, "_bin", current$binsize, 
-        ifelse(current$diameter == 0, "", paste0("_subset",current$diameter))
-    ))
-    print("##############################")
-
-    gc()
-}

@@ -39,5 +39,6 @@ install.packages('dplyr', repos = 'https://cloud.r-project.org')
 
 # cell annotations
 BiocManager::install("celldex")
+BiocManager::install("scRNAseq")
 
 print("Installed R packages")
