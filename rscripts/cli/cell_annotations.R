@@ -2,9 +2,13 @@
 # LIBS + PARAMS
 ##############################
 library(Seurat)
-library(SingleR)
 library(ggplot2)
+library(SingleR)
+library(scibetR)
+library(dplyr)
 
+if (!requireNamespace("celldex", quietly = TRUE))
+  BiocManager::install("celldex")
 RefData = celldex::MouseRNAseqData()
 
 # params
