@@ -128,7 +128,7 @@ scibet_annotations <- function (bUseMainLabels) {
     # umap
     Idents(obj) = "scibet"
     p = DimPlot(obj)
-    ggsave(paste0(OUTPUT_DIR, "/scibet_umap_", ifelse(bIsMain, "main", "fine"), ".png"), p, width = 8, height = 8)
+    ggsave(paste0(OUTPUT_DIR, "/scibet_umap_", ifelse(bUseMainLabels, "main", "fine"), ".png"), p, width = 8, height = 8)
 
     # dotpot
     g = SelectGene_R(test, k = 30)
@@ -139,7 +139,7 @@ scibet_annotations <- function (bUseMainLabels) {
             theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1, size = 14),
                 text = element_text(size = 17),
                 plot.background = element_rect(fill = "white"))
-    ggsave(paste0(OUTPUT_DIR, "/scibet_dotplot_", ifelse(bIsMain, "main", "fine"), ".png"), p, width = 9, height = 7)
+    ggsave(paste0(OUTPUT_DIR, "/scibet_dotplot_", ifelse(bUseMainLabels, "main", "fine"), ".png"), p, width = 9, height = 7)
     return(obj)
 }
 
