@@ -13,8 +13,8 @@ else
         Rscript $1 --id ${ID[$i]} \
             --method ${NORM_METHOD[$i]} \
             --binsize ${BINSIZE[$i]} \
-            --diameter ${DIAMETER[$i]} # \
-           # --resolution ${RESOLUTION[$i]}
+            --diameter ${DIAMETER[$i]} \
+            --resolution ${RESOLUTION[$i]}
     done
 
 fi

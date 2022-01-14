@@ -110,6 +110,9 @@ apt-get install imagemagick -y
 # java
 apt-get install openjdk-17-jdk -y
 
+# scRNAseq R-lib
+apt-get install libghc-bzlib-dev -y
+
 ##############################
 # Finished
 ##############################

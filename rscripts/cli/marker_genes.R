@@ -16,19 +16,33 @@ source("/mnt/data/scripts/rscripts/functions/accurate_plot.R")
 # params
 DIR = "/mnt/data"
 
-# to do multiple runs in 1 go
-DATA = data.frame(
-  "id"          = c("tongue-5", "tongue-5", "tongue-5", "tongue-5", "tongue-4", "tongue-4", "tongue-4", "tongue-5", "tongue-5", "tongue-4", "tongue-4"),
-  "binsize"     = c(50, 100, 20, 30, 50, 100, 30, 50, 100, 50, 100),
-  "norm_method" = c("SCTransform", "SCTransform", "SCTransform", "SCTransform", "SCTransform", "SCTransform", "SCTransform", "NormalizeData", "NormalizeData", "NormalizeData", "NormalizeData"),
-  "diameter"    = c(0, 0, 40, 25, 0, 0, 25, 0, 0, 0, 0)
-)
-DATA = data.frame(
-  "id"          = c("tongue-5", "tongue-5", "tongue-4", "tongue-4", "tongue-5", "tongue-5", "tongue-4", "tongue-4"),
-  "binsize"     = c(50, 100, 50, 100, 50, 100, 50, 100),
-  "norm_method" = c("NormalizeData", "NormalizeData", "NormalizeData", "NormalizeData", "SCTransform", "SCTransform", "SCTransform", "SCTransform"),
-  "diameter"    = c(0, 0, 0, 0, 0, 0, 0, 0)
-)
+# arg parsing
+library(argparser)
+args <- arg_parser("Cluster the seurat obj then plot a umap and spatial image")
+args <- add_argument(args, "--id", help="TONGUE_ID")
+args <- add_argument(args, "--binsize", help = "binsize")
+args <- add_argument(args, "--method", help="method of normalisation, SCT || LN")
+args <- add_argument(args, "--diameter", help="supply the diameter, 0 if not subsetting")
+args <- add_argument(args, "--resolution", help="seurat FindCluster resolution", default=0.5)
+argv <- parse_args(args)
+
+TONGUE_ID   = argv$id
+METHOD      = argv$method
+BINSIZE     = as.integer(argv$binsize)
+DIAMETER    = as.integer(argv$diameter)
+RESOLUTION  = as.double(argv$resolution)
+
+# other required variables
+METHOD_NAME = ifelse(METHOD == "SCT", "SCTransform", "NormalizeData")
+ASSAY_TO_USE = ifelse(METHOD == "SCT", "SCT", "Spatial")
+
+FOLDER_NAME = sprintf("%s_bin%s_subset%s_res%s", TONGUE_ID, BINSIZE, DIAMETER, RESOLUTION)
+FILENAME = paste0(FOLDER_NAME, ".rds")
+INPUT = paste0(DIR, "/umap_clusters/", METHOD_NAME, "/RDS/", FILENAME)
+
+# output dir
+OUTPUT_DIR = sprintf("%s/markers/%s/%s", DIR, METHOD_NAME, FOLDER_NAME)
+if (!dir.exists(OUTPUT_DIR)) dir.create(OUTPUT_DIR)
 
 ##############################
 # FUNCTIONS
@@ -104,36 +118,36 @@ save_markers <- function(markers, f_name) {
 
 plot_heatmap <- function (obj, markers) {
   p = DoHeatmap(subset(obj, downsample = 1000), 
-                features = markers$top3_markers$genes, assay = assay_to_use, label=F) +
+                features = markers$top3_markers$genes, assay = ASSAY_TO_USE, label=F) +
           ggtitle(sprintf("Heatmap of 3 markers genes from each cluster\n%s_bin%s%s downsampled to 1000", 
-                            current$id, current$binsize, 
-                            ifelse(current$diameter == 0, "", paste0("_subset",current$diameter)))) + 
+                            TONGUE_ID, BINSIZE, 
+                            ifelse(DIAMETER == 0, "", paste0("_subset",DIAMETER)))) + 
           theme(text = element_text(size = 14))
   # The following features were omitted as they were not found in the scale.data slot for the SCT assay: Acta1, Tnni2, Myh4
-  ggsave(paste0(output_dir, "/heatmap.png"), p, width = 8, height = 6)
+  ggsave(paste0(OUTPUT_DIR, "/heatmap.png"), p, width = 8, height = 6)
 }
 
 plot_vln <- function (obj, markers) {
-  p = VlnPlot(obj, features=markers$top3_markers$genes, assay = assay_to_use, stack = T, pt.size = 0, flip=T) +
+  p = VlnPlot(obj, features=markers$top3_markers$genes, assay = ASSAY_TO_USE, stack = T, pt.size = 0, flip=T) +
         NoLegend() + 
         ggtitle(sprintf("Vln plot of 3 markers genes from each cluster\n%s_bin%s%s", 
-                        current$id, current$binsize, 
-                        ifelse(current$diameter == 0, "", paste0("_subset",current$diameter)))) + 
+                        TONGUE_ID, BINSIZE, 
+                        ifelse(DIAMETER == 0, "", paste0("_subset",DIAMETER)))) + 
         theme(text = element_text(size = 28),
               plot.background = element_rect(fill = "white"))
-  ggsave(paste0(output_dir, "/vln_plot.png"), p, width = 15, height = 15)
+  ggsave(paste0(OUTPUT_DIR, "/vln_plot.png"), p, width = 15, height = 15)
 }
 
 dot_plot <- function (obj, markers) {
-  p = DotPlot(obj, features = unique(markers$top3_markers$genes), assay = assay_to_use, dot.scale = 3, cols="RdYlBu") + 
+  p = DotPlot(obj, features = unique(markers$top3_markers$genes), assay = ASSAY_TO_USE, dot.scale = 3, cols="RdYlBu") + 
         ggtitle(sprintf("Dot plot of 3 markers genes from each cluster\n%s_bin%s%s", 
-                        current$id, current$binsize, 
-                        ifelse(current$diameter == 0, "", paste0("_subset",current$diameter)))) + 
+                        TONGUE_ID, BINSIZE, 
+                        ifelse(DIAMETER == 0, "", paste0("_subset",DIAMETER)))) + 
         theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1, size = 14),
               text = element_text(size = 17),
               plot.background = element_rect(fill = "white"))
         
-  ggsave(paste0(output_dir, "/dot_plot_of_markers.png"), p, width = 9, height = 7)
+  ggsave(paste0(OUTPUT_DIR, "/dot_plot_of_markers.png"), p, width = 9, height = 7)
 }
 
 plot_marker_gene_spatial <- function (obj, markers, colours) {
@@ -148,7 +162,7 @@ plot_marker_gene_spatial <- function (obj, markers, colours) {
       genes = c(genes, g)
       
       accurate_plot(SpatialFeaturePlot(obj, features = g)$data, 
-                    filename = paste0(output_dir, "/", g, "_spatial.png"), 
+                    filename = paste0(OUTPUT_DIR, "/", g, "_spatial.png"), 
                     legend_name = g,
                     custom_colours = colours,
                     dpi = 500,
@@ -166,8 +180,8 @@ plot_marker_gene_spatial <- function (obj, markers, colours) {
   for (i in seq(1, n)) { # 4 wide
     base_image_index = (ceiling(i / 4) - 1) * 4 + 1
     if (base_image_index != i) {
-      base_file = paste0(output_dir, "/", genes[base_image_index], "_spatial.png")
-      new_file = paste0(output_dir, "/", genes[i], "_spatial.png")
+      base_file = paste0(OUTPUT_DIR, "/", genes[base_image_index], "_spatial.png")
+      new_file = paste0(OUTPUT_DIR, "/", genes[i], "_spatial.png")
       
       system(sprintf("convert %s %s +append %s", base_file, new_file, base_file))
       system(paste0("rm ", new_file))
@@ -177,8 +191,8 @@ plot_marker_gene_spatial <- function (obj, markers, colours) {
   # combine plots into 1
   if (n > 4) {
     for (i in seq(5, (ceiling(n / 4) - 1) * 4 + 1, by = 4)) {
-      base_file = paste0(output_dir, "/", genes[1], "_spatial.png")
-      new_file = paste0(output_dir, "/", genes[i], "_spatial.png")
+      base_file = paste0(OUTPUT_DIR, "/", genes[1], "_spatial.png")
+      new_file = paste0(OUTPUT_DIR, "/", genes[i], "_spatial.png")
       
       system(sprintf("convert %s %s -append %s", base_file, new_file, base_file))
       system(paste0("rm ", new_file))
@@ -186,65 +200,27 @@ plot_marker_gene_spatial <- function (obj, markers, colours) {
   }
   
   system(sprintf("mv %s %s", 
-                  paste0(output_dir, "/", genes[1], "_spatial.png"), 
-                  paste0(output_dir, "/", "marker_genes_spatial_plot.png")))
+                  paste0(OUTPUT_DIR, "/", genes[1], "_spatial.png"), 
+                  paste0(OUTPUT_DIR, "/", "marker_genes_spatial_plot.png")))
 
 }
 
 ##############################
 # START
 ##############################
-for (it in seq(1, length(rownames(DATA)))) {
-    current = DATA[it,]
-    print("##############################")
-    print(paste0(
-        "Starting ", current$id, "_bin", current$binsize, 
-        ifelse(current$diameter == 0, "", paste0("_subset",current$diameter)), " ..."
-    ))
-    print("##############################")
+# read file
+obj = readRDS(INPUT)
 
-    # create filenames
-    if (current$diameter == 0) { # not a subset
-        filename = sprintf("%s_bin%s_red.Rds", current$id, current$binsize)
-        folder_name = sprintf("%s_%s_bin%s", ifelse(current$norm_method == "SCTransform", "SCT", "LN"), current$id, current$binsize)
-    } else {
-        filename = sprintf("%s_bin%s_subset%s_red.Rds", current$id, current$binsize, current$diameter)
-        folder_name = sprintf("%s_%s_bin%s_subset%s", ifelse(current$norm_method == "SCTransform", "SCT", "LN"), current$id, current$binsize, current$diameter)
-    }
+# markers
+markers = find_markers(obj)
+markers = get_all_markers(markers)
 
-    # output dir
-    output_dir = sprintf("%s/markers/%s", DIR, folder_name)
-    if (!dir.exists(output_dir)) dir.create(output_dir)
+save_markers(markers, paste0(OUTPUT_DIR, "/markers.xlsx"))
 
-    # read data
-    input = sprintf(
-        "%s/%s/%s", DIR, ifelse(current$norm_method == "SCTransform", "scDimReducedRDS", "dimReducedRDS"), filename
-    )
-    obj = readRDS(input)
-    
-    assay_to_use = ifelse(current$norm_method == "SCTransform", "SCT", "Spatial")
+# plots
+plot_heatmap(obj, markers)
+plot_vln(obj, markers)
+dot_plot(obj, markers)
 
-    # markers
-    markers = find_markers(obj)
-    markers = get_all_markers(markers)
-
-    save_markers(markers, paste0(output_dir, "/markers.xlsx"))
-
-    # plots
-    plot_heatmap(obj, markers)
-    plot_vln(obj, markers)
-    dot_plot(obj, markers)
-
-    colours = rev(brewer.pal(n = 11, name = "Spectral"))
-    plot_marker_gene_spatial(obj, markers, colours)
-
-    # done
-    print("##############################")
-    print(paste0(
-        "Finished ", current$id, "_bin", current$binsize, 
-        ifelse(current$diameter == 0, "", paste0("_subset",current$diameter))
-    ))
-    print("##############################")
-
-    gc()
-}
+colours = rev(brewer.pal(n = 11, name = "Spectral"))
+plot_marker_gene_spatial(obj, markers, colours)
