@@ -1,11 +1,13 @@
 ##############################
 # LIBS + PARAMS
 ##############################
-library(Seurat)
-library(ggplot2)
-library(SingleR)
-library(scibetR)
-library(dplyr)
+suppressMessages(library(Seurat))
+suppressMessages(library(ggplot2))
+suppressMessages(library(SingleR))
+if (!requireNamespace("scibetR", quietly = TRUE))
+  devtools::install_github("zwj-tina/scibetR")
+suppressMessages(library(scibetR))
+suppressMessages(library(dplyr))
 
 if (!requireNamespace("celldex", quietly = TRUE))
   BiocManager::install("celldex")
