@@ -154,10 +154,10 @@ scibet_annotations <- function (bUseMainLabels) {
 obj = readRDS(INPUT)
 
 # using mainlabels, annotate clusters and cells
-#obj = singleR_annotations(T, F)
-#obj = singleR_annotations(T, T)
-#obj = singleR_annotations(F, F)
-#obj = singleR_annotations(F, T)
+obj = singleR_annotations(T, F)
+obj = singleR_annotations(T, T)
+obj = singleR_annotations(F, F)
+obj = singleR_annotations(F, T)
 
 obj = scibet_annotations(T)
 
