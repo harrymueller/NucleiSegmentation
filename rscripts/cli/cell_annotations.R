@@ -35,14 +35,51 @@ FILENAME = paste0(FOLDER_NAME, ".rds")
 INPUT = paste0(DIR, "/umap_clusters/", METHOD_NAME, "/RDS/", FILENAME)
 
 # output dir
-OUTPUT_DIR = sprintf("%s/markers/%s/%s", DIR, METHOD_NAME, FOLDER_NAME)
+OUTPUT_DIR = sprintf("%s/cell_annotations/%s/%s", DIR, METHOD_NAME, FOLDER_NAME)
 if (!dir.exists(OUTPUT_DIR)) dir.create(OUTPUT_DIR)
 
 ##############################
 # FUNCTIONS
 ##############################
-singleR_annotations <- function (bUseMainLabels) {
+singleR_annotations <- function (bUseMainLabels, bByClusters) {
+    if (bIsMain) {
+        labels = RefData$label.main
+    } else {
+        labels = RefData$label.fine
+    }
+
+    Idents(obj) = "seurat_clusters"
+
+    # ensure log-normalised counts
+    if (bByClusters) {
+    pred = SingleR(test = obj@assays$Spatial@data, 
+                    ref = RefData, 
+                    labels = labels, 
+                    clusters = Idents(obj))
+    } else {
+    pred = SingleR(test = obj@assays$Spatial@data, 
+                    ref = RefData, 
+                    labels = labels)
+    }
+
+    ggsave(paste0(OUTPUT_DIR, "/singleR_heatmap_", ifelse(bIsMain, "main", "fine"), "_", ifelse(bByClusters, "clusters", "cells"), ".png"), p, width = 10, height = 7)
+
+    annotation_label = paste("singleR", 
+                            ifelse(bIsMain, "main", "fine"), 
+                            ifelse(bByClusters, "clusters", "cells"), 
+                            sep="_")
+    if (bByClusters) {
+    obj@meta.data[[annotation_label]] = factor(unfactor(obj@meta.data$seurat_clusters), 
+                                                labels = pred$first.labels)
+    } else {
+    obj@meta.data[[annotation_label]] = pred$first.labels
+    }
+    Idents(obj) = annotation_label
     
+    p = DimPlot(obj)
+    ggsave(paste0(OUTPUT_DIR, "/singleR_umap_", ifelse(bIsMain, "main", "fine"), "_", ifelse(bByClusters, "clusters", "cells"), ".png"), p, width = 8, height = 8)
+
+    return(obj)
 }
 
 ##############################
@@ -51,3 +88,10 @@ singleR_annotations <- function (bUseMainLabels) {
 # read file
 obj = readRDS(INPUT)
 
+# using mainlabels, annotate clusters and cells
+obj = singleR_annotations(T, F)
+obj = singleR_annotations(T, T)
+#obj = singleR_annotations(F, F)
+#obj = singleR_annotations(F, T)
+
+saveRDS(obj, paste0(OUTPUT_DIR, "/singleR.rds"))
