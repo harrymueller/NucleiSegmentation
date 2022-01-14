@@ -25,7 +25,7 @@ METHOD_NAME = ifelse(METHOD == "SCT", "SCTransform", "NormalizeData")
 METHOD_FOLDER = ifelse(METHOD == "SCT", "scDimReducedRDS", "dimReducedRDS")
 
 # other consts
-INPUT_DIR = "/mnt/data/"
+INPUT_DIR = "/mnt/data/dimReduction"
 NAME = sprintf("%s_bin%s_subset%s_res%s", TONGUE_ID, BINSIZE, DIAMETER, round(RESOLUTION, 1))
 PLOTS_DIR = sprintf("/mnt/data/umap_clusters/%s/plots", METHOD_NAME)
 RDS_DIR = sprintf("/mnt/data/umap_clusters/%s/RDS", METHOD_NAME)
@@ -37,9 +37,9 @@ if (!dir.exists(RDS_DIR)) dir.create(RDS_DIR)
 
 # read in RDS
 if (DIAMETER == 0) {
-    INPUT = sprintf("%s/%s/%s_bin%s_red.Rds", INPUT_DIR, METHOD_FOLDER, TONGUE_ID, BINSIZE)
+    INPUT = sprintf("%s/%s/%s_bin%s_red.Rds", INPUT_DIR, METHOD_NAME, TONGUE_ID, BINSIZE)
 } else {
-    INPUT = sprintf("%s/%s/%s_bin%s_subset%s_red.Rds", INPUT_DIR, METHOD_FOLDER, TONGUE_ID, BINSIZE, DIAMETER)
+    INPUT = sprintf("%s/%s/%s_bin%s_subset%s_red.Rds", INPUT_DIR, METHOD_NAME, TONGUE_ID, BINSIZE, DIAMETER)
 }
 obj = readRDS(INPUT)
 
