@@ -54,14 +54,14 @@ singleR_annotations <- function (bUseMainLabels, bByClusters) {
 
     # ensure log-normalised counts
     if (bByClusters) {
-    pred = SingleR(test = obj@assays$Spatial@data, 
-                    ref = RefData, 
-                    labels = labels, 
-                    clusters = Idents(obj))
+        pred = SingleR(test = obj@assays[[ASSAY_TO_USE]]@data, 
+                        ref = RefData, 
+                        labels = labels, 
+                        clusters = Idents(obj))
     } else {
-    pred = SingleR(test = obj@assays$Spatial@data, 
-                    ref = RefData, 
-                    labels = labels)
+        pred = SingleR(test = obj@assays[[ASSAY_TO_USE]]@data, 
+                        ref = RefData, 
+                        labels = labels)
     }
 
     # heatmap
@@ -107,7 +107,7 @@ scibet_annotations <- function (bUseMainLabels) {
 
     # train and test sets
     train = as.data.frame(t(train))
-    test = as.data.frame(t(as.matrix(obj@assays$Spatial@data)))
+    test = as.data.frame(t(as.matrix(obj@assays[[ASSAY_TO_USE]]@data)))
 
     # annotate cells
     pred = SciBet_R(train, test)
