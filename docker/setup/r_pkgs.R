@@ -41,4 +41,8 @@ install.packages('dplyr', repos = 'https://cloud.r-project.org')
 # cell annotations
 BiocManager::install("celldex")
 
+# functional annotations
+BiocManager::install("DOSE")
+BiocManager::install("org.Mm.eg.db")
+
 print("Installed R packages")
