@@ -4,6 +4,6 @@
 nohup docker run -v /data/tongue:/mnt/data \
     tonguediscovery \
     bash /mnt/data/scripts/run.sh \
-    /mnt/data/scripts/rscripts/cli/umap_clustering.R \
+    /mnt/data/scripts/rscripts/cli/cell_annotations.R \
     > log.out &
 tail -f log.out
