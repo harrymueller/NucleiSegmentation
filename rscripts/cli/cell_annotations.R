@@ -131,6 +131,9 @@ scibet_annotations <- function (bUseMainLabels) {
     ggsave(paste0(OUTPUT_DIR, "/scibet_umap_", ifelse(bUseMainLabels, "main", "fine"), ".png"), p, width = 8, height = 8)
 
     # dotpot
+    test = cbind(test, obj@meta.data$scibet)
+    colnames(test)[length(colnames(test))] = "label"
+
     g = SelectGene_R(test, k = 30)
     p = DotPlot(obj, features = g, assay = ASSAY_TO_USE, dot.scale = 3, cols="RdYlBu") + 
             ggtitle(sprintf("Dot plot of 3 markers genes from each cluster\n%s_bin%s%s", 
@@ -151,8 +154,8 @@ scibet_annotations <- function (bUseMainLabels) {
 obj = readRDS(INPUT)
 
 # using mainlabels, annotate clusters and cells
-obj = singleR_annotations(T, F)
-obj = singleR_annotations(T, T)
+#obj = singleR_annotations(T, F)
+#obj = singleR_annotations(T, T)
 #obj = singleR_annotations(F, F)
 #obj = singleR_annotations(F, T)
 
