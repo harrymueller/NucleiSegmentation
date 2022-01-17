@@ -1,19 +1,28 @@
 ##############################
-# LIBS + PARAMS
+# LIBS
 ##############################
 suppressMessages(library(Seurat))
 suppressMessages(library(ggplot2))
 suppressMessages(library(SingleR))
+suppressMessages(library(dplyr))
+suppressMessages(library(tibble))
+suppressMessages(library(xlsx))
+
+# temp until rebuilt docker
 if (!requireNamespace("scibetR", quietly = TRUE))
   devtools::install_github("zwj-tina/scibetR")
 suppressMessages(library(scibetR))
-suppressMessages(library(dplyr))
 
+# celldex for reference dataset
 if (!requireNamespace("celldex", quietly = TRUE))
   BiocManager::install("celldex")
-RefData = celldex::MouseRNAseqData()
 
-# params
+# FN for accurate spatial plotting
+source("/mnt/data/scripts/rscripts/functions/accurate_plot.R")
+
+##############################
+# PARAMS
+##############################
 DIR = "/mnt/data"
 
 # arg parsing
@@ -44,11 +53,53 @@ INPUT = paste0(DIR, "/umap_clusters/", METHOD_NAME, "/RDS/", FILENAME)
 OUTPUT_DIR = sprintf("%s/cell_annotations/%s/%s", DIR, METHOD_NAME, FOLDER_NAME)
 if (!dir.exists(OUTPUT_DIR)) dir.create(OUTPUT_DIR)
 
+print("############################################################")
+print(paste0("Starting ", FOLDER_NAME, "..."))
+print("############################################################")
+
+# ref data
+RefData = celldex::MouseRNAseqData()
+
 ##############################
 # FUNCTIONS
 ##############################
+# plot umaps and spatial dimensions of both cell annotations and clusters in a 2x2 grid
+dim_plots <- function(obj, ident, filename) {
+    temp_filename = stringr::str_replace_all(filename, ".png", ".TEMP.png")
+
+    Idents(obj) = ident
+    p1 <- DimPlot(obj, reduction = "umap", label = F, pt.size = 1) + theme(legend.position = "none")
+    p2 <- SpatialDimPlot(obj)
+
+    accurate_plot(
+        p2$data,
+        filename = filename,
+        legend_name = paste0("Cell Annotations\n", stringr::str_replace_all(FOLDER_NAME, "_", "\n")), 
+        left_plot = p1,
+        dpi = 400,
+        minres = 1000
+    )
+
+    Idents(obj) = "seurat_clusters"
+    p1 <- DimPlot(obj, reduction = "umap", label = F, pt.size = 1) + theme(legend.position = "none")
+    p2 <- SpatialDimPlot(obj)
+
+    accurate_plot(
+        p2$data,
+        filename = temp_filename,
+        legend_name = "Seurat Clusters", 
+        left_plot = p1,
+        dpi = 400,
+        minres = 1000
+    )
+
+    system(sprintf("convert %s %s -append %s", filename, temp_filename, filename))
+    system(paste("rm", temp_filename))
+}
+
+# singleR annotations
 singleR_annotations <- function (bUseMainLabels, bByClusters) {
-    # refdata labels to use
+    print(sprintf("Annotating using singleR (%s %s)...", bUseMainLabels, bByClusters))
     if (bUseMainLabels) {
         labels = RefData$label.main
     } else {
@@ -72,7 +123,7 @@ singleR_annotations <- function (bUseMainLabels, bByClusters) {
 
     # heatmap
     p = plotScoreHeatmap(pred)
-    ggsave(paste0(OUTPUT_DIR, "/singleR_heatmap_", ifelse(bUseMainLabels, "main", "fine"), "_", ifelse(bByClusters, "clusters", "cells"), ".png"), p, width = 10, height = 7)
+    ggsave(paste0(OUTPUT_DIR, "/singleR_heatmap_", ifelse(bUseMainLabels, "main", "fine"), "_", ifelse(bByClusters, "clusters", "cells"), ".png"), p, width = 11, height = 7, dpi = 200)
 
     # labels
     annotation_label = paste("singleR", 
@@ -87,18 +138,21 @@ singleR_annotations <- function (bUseMainLabels, bByClusters) {
     }
 
     # umap
-    Idents(obj) = annotation_label
-    p = DimPlot(obj)
-    ggsave(paste0(OUTPUT_DIR, "/singleR_umap_", ifelse(bUseMainLabels, "main", "fine"), "_", ifelse(bByClusters, "clusters", "cells"), ".png"), p, width = 8, height = 8)
+    dim_plots(obj, annotation_label, paste0(OUTPUT_DIR, "/singleR_umap_", ifelse(bUseMainLabels, "main", "fine"), "_", ifelse(bByClusters, "clusters", "cells"), ".png"))
 
     return(obj)
 }
 
+# sciebet annotations
 scibet_annotations <- function (bUseMainLabels) {
+    print(sprintf("Annotating using SciBet (%s)...", bUseMainLabels))
+
+    # create the training set for the celldex ref
     train = as.data.frame(RefData@assays@data)
     train[[1]] = NULL
     train[[1]] = NULL
 
+    # which ref labels to use, and what to call the metadata
     if (bUseMainLabels) {
         refLabels = RefData$label.main
         labelName = "scibet_main"
@@ -107,7 +161,7 @@ scibet_annotations <- function (bUseMainLabels) {
         labelName = "scibet_fine"
     }
 
-    # add labels
+    # add labels to training set
     train = rbind(train, as.integer(as.factor(refLabels)))
     rownames(train)[length(rownames(train))] = "label"
 
@@ -119,33 +173,64 @@ scibet_annotations <- function (bUseMainLabels) {
     pred = SciBet_R(train, test)
 
     # add labels to seurat obj
-    obj@meta.data$scibet = pred
-    labels = levels(factor(RefData$label.main))
+    obj@meta.data[[labelName]] = pred
+    labels = levels(factor(refLabels))
     for (i in seq(length(labels))) {
-        obj@meta.data$scibet[obj@meta.data$scibet == i] = labels[i]
+        obj@meta.data[[labelName]][obj@meta.data[[labelName]] == i] = labels[i]
     }
 
     # umap
-    Idents(obj) = "scibet"
-    p = DimPlot(obj)
-    ggsave(paste0(OUTPUT_DIR, "/scibet_umap_", ifelse(bUseMainLabels, "main", "fine"), ".png"), p, width = 8, height = 8)
+    dim_plots(obj, labelName, paste0(OUTPUT_DIR, "/scibet_umap_", ifelse(bUseMainLabels, "main", "fine"), ".png"))
 
-    # dotpot
-    test = cbind(test, obj@meta.data$scibet)
+    # add labels to test dataset
+    test = cbind(test, obj@meta.data[[labelName]])
     colnames(test)[length(colnames(test))] = "label"
 
-    g = SelectGene_R(test, k = 30)
-    p = DotPlot(obj, features = g, assay = ASSAY_TO_USE, dot.scale = 3, cols="RdYlBu") + 
-            ggtitle(sprintf("Dot plot of 3 markers genes from each cluster\n%s_bin%s%s", 
-                            TONGUE_ID, BINSIZE, 
-                            ifelse(DIAMETER == 0, "", paste0("_subset",DIAMETER)))) + 
-            theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1, size = 14),
-                text = element_text(size = 17),
-                plot.background = element_rect(fill = "white"))
-    ggsave(paste0(OUTPUT_DIR, "/scibet_dotplot_", ifelse(bUseMainLabels, "main", "fine"), ".png"), p, width = 9, height = 7)
+    # find top 50 genes (as determined by SciBet fn), then do a dotplot
+    genes = SelectGene_R(test, k = 50)
+    p = scibet::Marker_heatmap(test, genes) + 
+                         ggtitle(sprintf("Dot plot of 3 markers genes from each cluster\n%s_bin%s%s", 
+                                            TONGUE_ID, BINSIZE, 
+                                            ifelse(DIAMETER == 0, "", paste0("_subset",DIAMETER))))
+    ggsave(paste0(OUTPUT_DIR, "/scibet_dotplot_", ifelse(bUseMainLabels, "main", "fine"), ".png"), p, width = 11, height = 7)
     return(obj)
 }
 
+# produce a df of the counts of cts
+ct_xtabs_df <- function(obj, col) {
+  df = data.frame(xtabs(~obj@meta.data[[col]]))
+  names(df) = c("Cell Type", col)
+  df[["Cell Type"]] = unfactor(df[["Cell Type"]])
+  return(df)
+}
+
+# save the xtabs of all annotations to a xlsx file
+save_annotations <- function(obj, f_name) {
+  print("Saving annotations...")
+  main = ct_xtabs_df(obj, "singleR_main_cells")
+  main = merge.data.frame(main, ct_xtabs_df(obj, "singleR_main_clusters"), all = T)
+  main = merge.data.frame(main, ct_xtabs_df(obj, "scibet_main"), all = T)
+  
+  fine = ct_xtabs_df(obj, "singleR_fine_cells")
+  fine = merge.data.frame(fine, ct_xtabs_df(obj, "singleR_fine_clusters"), all = T)
+  fine = merge.data.frame(fine, ct_xtabs_df(obj, "scibet_fine"), all = T)
+  
+  # save to file
+  wb <- createWorkbook()
+  s = createSheet(wb, "Cell Annotations")
+  
+  # main labels
+  addDataFrame(data.frame(paste0("Cell annotations of ", FOLDER_NAME, ", using celldex::MouseRNAseqData() 'main' labels")), 
+               s, col.names = F, row.names = F)
+  addDataFrame(t(main), s, col.names = F, row.names = T, startRow = 2)
+  
+  # fine labels
+  addDataFrame(data.frame(paste0("Cell annotations of ", FOLDER_NAME, ", using celldex::MouseRNAseqData() 'fine' labels")), 
+               s, col.names = F, row.names = F, startRow = 7)
+  addDataFrame(t(fine), s, col.names = F, row.names = T, startRow = 8)
+  
+  saveWorkbook(wb, f_name)
+}
 
 ##############################
 # START
@@ -153,12 +238,19 @@ scibet_annotations <- function (bUseMainLabels) {
 # read file
 obj = readRDS(INPUT)
 
-# using mainlabels, annotate clusters and cells
+# annotate
 obj = singleR_annotations(T, F)
+exit()
 obj = singleR_annotations(T, T)
 obj = singleR_annotations(F, F)
 obj = singleR_annotations(F, T)
 
 obj = scibet_annotations(T)
+obj = scibet_annotations(F)
 
+save_annotations(obj, paste0(OUTPUT_DIR, "/cell_annotations.xlsx"))
 saveRDS(obj, paste0(OUTPUT_DIR, "/annotated_seurat.rds"))
+
+print("############################################################")
+print(paste0("Finished ", FOLDER_NAME, "."))
+print("############################################################")
