@@ -240,7 +240,6 @@ obj = readRDS(INPUT)
 
 # annotate
 obj = singleR_annotations(T, F)
-exit()
 obj = singleR_annotations(T, T)
 obj = singleR_annotations(F, F)
 obj = singleR_annotations(F, T)
