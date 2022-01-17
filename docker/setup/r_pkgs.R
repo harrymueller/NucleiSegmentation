@@ -13,8 +13,8 @@ install.packages("Seurat", version = "4.0.0", repos = repo)
 BiocManager::install("SingleR") 
 
 # scibet v1.0
-devtools::install_github("PaulingLiu/scibet")
-devtools::install_github("zwj-tina/scibetR") # pure R version for linux + windows
+devtools::install_github("PaulingLiu/scibet") # still need the orig implementation for Marker_heatmap
+devtools::install_github("zwj-tina/scibetR") # pure R implementation for linux + windows
 
 # clusterProfiler v4.3.0 (report was v4.0.0)
 BiocManager::install("clusterProfiler")
@@ -44,5 +44,6 @@ BiocManager::install("celldex")
 # functional annotations
 BiocManager::install("DOSE")
 BiocManager::install("org.Mm.eg.db")
+install.packages("ggnewscale")
 
 print("Installed R packages")
