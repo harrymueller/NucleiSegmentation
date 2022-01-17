@@ -250,6 +250,9 @@ obj = scibet_annotations(F)
 save_annotations(obj, paste0(OUTPUT_DIR, "/cell_annotations.xlsx"))
 saveRDS(obj, paste0(OUTPUT_DIR, "/annotated_seurat.rds"))
 
+# keeps getting created
+system("rm /mnt/data/scripts/Rplots.pdf")
+
 print("############################################################")
 print(paste0("Finished ", FOLDER_NAME, "."))
 print("############################################################")
