@@ -68,20 +68,21 @@ dim_plots <- function(obj, ident, filename) {
     temp_filename = stringr::str_replace_all(filename, ".png", ".TEMP.png")
 
     Idents(obj) = ident
-    p1 <- DimPlot(obj, reduction = "umap", label = F, pt.size = 1) + theme(legend.position = "none")
+    p1 <- DimPlot(obj, reduction = "umap", label = F, pt.size = 0.5) + theme(legend.position = "none")
     p2 <- SpatialDimPlot(obj)
 
     accurate_plot(
         p2$data,
         filename = filename,
-        legend_name = paste0("Cell Annotations\n", stringr::str_replace_all(FOLDER_NAME, "_", "\n")), 
+        legend_name = paste0("Cell Annotations\n", FOLDER_NAME), # stringr::str_replace_all(FOLDER_NAME, "_", "\n")), 
         left_plot = p1,
         dpi = 400,
-        minres = 1000
+        minres = 1000,
+        legend_space = 4
     )
 
     Idents(obj) = "seurat_clusters"
-    p1 <- DimPlot(obj, reduction = "umap", label = F, pt.size = 1) + theme(legend.position = "none")
+    p1 <- DimPlot(obj, reduction = "umap", label = F, pt.size = 0.5) + theme(legend.position = "none")
     p2 <- SpatialDimPlot(obj)
 
     accurate_plot(
@@ -90,7 +91,8 @@ dim_plots <- function(obj, ident, filename) {
         legend_name = "Seurat Clusters", 
         left_plot = p1,
         dpi = 400,
-        minres = 1000
+        minres = 1000,
+        legend_space = 4
     )
 
     system(sprintf("convert %s %s -append %s", filename, temp_filename, filename))
@@ -123,7 +125,7 @@ singleR_annotations <- function (bUseMainLabels, bByClusters) {
 
     # heatmap
     p = plotScoreHeatmap(pred)
-    ggsave(paste0(OUTPUT_DIR, "/singleR_heatmap_", ifelse(bUseMainLabels, "main", "fine"), "_", ifelse(bByClusters, "clusters", "cells"), ".png"), p, width = 11, height = 7, dpi = 200)
+    ggsave(paste0(OUTPUT_DIR, "/singleR_heatmap_", ifelse(bUseMainLabels, "main", "fine"), "_", ifelse(bByClusters, "clusters", "cells"), ".png"), p, width = 12, height = 7, dpi = 200)
 
     # labels
     annotation_label = paste("singleR", 
@@ -187,12 +189,18 @@ scibet_annotations <- function (bUseMainLabels) {
     colnames(test)[length(colnames(test))] = "label"
 
     # find top 50 genes (as determined by SciBet fn), then do a dotplot
-    genes = SelectGene_R(test, k = 50)
+    genes = SelectGene_R(train, k = 50)
+    
     p = scibet::Marker_heatmap(test, genes) + 
-                         ggtitle(sprintf("Dot plot of 3 markers genes from each cluster\n%s_bin%s%s", 
+                         ggtitle(sprintf("Dot plot of 50 informative training genes\nas determined by the SciBet Entropy-Test\n%s_bin%s%s", 
                                             TONGUE_ID, BINSIZE, 
-                                            ifelse(DIAMETER == 0, "", paste0("_subset",DIAMETER))))
-    ggsave(paste0(OUTPUT_DIR, "/scibet_dotplot_", ifelse(bUseMainLabels, "main", "fine"), ".png"), p, width = 11, height = 7)
+                                            ifelse(DIAMETER == 0, "", paste0("_subset",DIAMETER)))) + 
+                        theme(text = element_text(size = 26), 
+                              axis.text.y = element_text(size = 24),
+                              axis.text.x = element_text(vjust = 0.5, size = 20),
+                              legend.title = element_text(size = 24),
+                              legend.text = element_text(size = 20))
+    ggsave(paste0(OUTPUT_DIR, "/scibet_dotplot_", ifelse(bUseMainLabels, "main", "fine"), ".png"), p, width = 20, height = 12, dpi = 200)
     return(obj)
 }
 
@@ -200,6 +208,8 @@ scibet_annotations <- function (bUseMainLabels) {
 ct_xtabs_df <- function(obj, col) {
   df = data.frame(xtabs(~obj@meta.data[[col]]))
   names(df) = c("Cell Type", col)
+  #rownames(df) = df[["Cell Type"]]
+  #df[["Cell Type"]] = NULL
   df[["Cell Type"]] = unfactor(df[["Cell Type"]])
   return(df)
 }
@@ -210,10 +220,14 @@ save_annotations <- function(obj, f_name) {
   main = ct_xtabs_df(obj, "singleR_main_cells")
   main = merge.data.frame(main, ct_xtabs_df(obj, "singleR_main_clusters"), all = T)
   main = merge.data.frame(main, ct_xtabs_df(obj, "scibet_main"), all = T)
+  rownames(main) = main[["Cell Type"]]
+  main[["Cell Type"]] = NULL
   
   fine = ct_xtabs_df(obj, "singleR_fine_cells")
   fine = merge.data.frame(fine, ct_xtabs_df(obj, "singleR_fine_clusters"), all = T)
   fine = merge.data.frame(fine, ct_xtabs_df(obj, "scibet_fine"), all = T)
+  rownames(fine) = fine[["Cell Type"]]
+  fine[["Cell Type"]] = NULL
   
   # save to file
   wb <- createWorkbook()
@@ -222,12 +236,12 @@ save_annotations <- function(obj, f_name) {
   # main labels
   addDataFrame(data.frame(paste0("Cell annotations of ", FOLDER_NAME, ", using celldex::MouseRNAseqData() 'main' labels")), 
                s, col.names = F, row.names = F)
-  addDataFrame(t(main), s, col.names = F, row.names = T, startRow = 2)
+  addDataFrame(t(main), s, col.names = T, row.names = T, startRow = 2)
   
   # fine labels
   addDataFrame(data.frame(paste0("Cell annotations of ", FOLDER_NAME, ", using celldex::MouseRNAseqData() 'fine' labels")), 
                s, col.names = F, row.names = F, startRow = 7)
-  addDataFrame(t(fine), s, col.names = F, row.names = T, startRow = 8)
+  addDataFrame(t(fine), s, col.names = T, row.names = T, startRow = 8)
   
   saveWorkbook(wb, f_name)
 }
