@@ -189,7 +189,8 @@ scibet_annotations <- function (bUseMainLabels) {
     colnames(test)[length(colnames(test))] = "label"
 
     # find top 50 genes (as determined by SciBet fn), then do a dotplot
-    genes = SelectGene_R(train, k = 50)
+    genes = SelectGene_R(train, k =100)
+    genes = genes[genes %in% colnames(test)][1:50]
     
     p = scibet::Marker_heatmap(test, genes) + 
                          ggtitle(sprintf("Dot plot of 50 informative training genes\nas determined by the SciBet Entropy-Test\n%s_bin%s%s", 
