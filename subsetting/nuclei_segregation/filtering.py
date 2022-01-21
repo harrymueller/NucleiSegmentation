@@ -1,7 +1,7 @@
 import numpy as np
 import cv2 as cv
 
-from image_ops import save_multiple_images, plot_histogram
+from image_ops import save_multiple_images, plot_histogram, save_labels
 from axolotl_paper_process import get_filepath
 
 """
@@ -43,7 +43,7 @@ def check_all_borders_connected(markers):
     Ensures markers are not too small or large
     Limits inclusive
 """
-def filter_by_size(markers, min_limit = 25, max_limit = None, filename = False):
+def filter_by_size(markers, min_limit = 25, max_limit = None, im = None, filename = None):
     unravelled = markers.ravel().astype(np.int32)
 
     # ignore borders (-1) and background (1)
@@ -62,12 +62,8 @@ def filter_by_size(markers, min_limit = 25, max_limit = None, filename = False):
 
     markers = check_all_borders_connected(markers)
 
-    if filename is not False:
-        markers_out = markers.astype(np.uint8)
-        markers_out = cv.applyColorMap(markers_out, cv.COLORMAP_JET)
-        markers_out[markers == -1,] = (255,255,255) # white outlines
-        markers_out[markers == 1,] = (0,0,0) # black background
-        save_multiple_images([markers_out], ["Size filtered markers"], filename)
+    if filename is not None and im is not None:
+        save_labels(im, markers, filename)
 
     return markers
 
@@ -102,11 +98,7 @@ def filter_by_brightness(im, markers, min_limit = None, max_limit = 255, filenam
         elif lab % 200 == 0:
             print(lab)
 
-    if filename is not False:
-        markers_out = markers.astype(np.uint8)
-        markers_out = cv.applyColorMap(markers_out, cv.COLORMAP_JET)
-        markers_out[markers == -1,] = (255,255,255) # white outlines
-        markers_out[markers == 1,] = (0,0,0) # black background
-        save_multiple_images([markers_out], ["Brightness filtered markers"], filename)
+    if filename is not None:
+        save_labels(im, markers, filename)
 
     return markers

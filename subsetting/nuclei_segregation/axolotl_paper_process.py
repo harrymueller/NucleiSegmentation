@@ -28,37 +28,46 @@ def get_filepath(filename):
     return "%s/%s" % (OUTPUT, filename)
 
 def main():
+    print("Reading in image...")
     # read image
     im = cv.imread(FILEPATH, cv.IMREAD_GRAYSCALE)
+    plot_histogram(im, get_filepath("histogram.png"))
 
-    if False:
-        im = cv.imread(FILEPATH, cv.IMREAD_GRAYSCALE)
-        plot_histogram(im, get_filepath("histogram.png"))
+    # apply thresholds
+    print("Applying thresholds...")
+    global_thresh = thresholding.global_thresholding(im, val = 100, filename = get_filepath("global_threshold.png"))
+    gaussian_thresh = thresholding.gaussian_thresholding(mask_image(im, global_thresh == 255), extra_thresh = global_thresh, blockSize = 41, C = 0.03, filename = get_filepath("gaussian_threshold.png"))
 
-        # apply thresholds
-        global_thresh = thresholding.global_thresholding(im, val = 100, filename = get_filepath("global_threshold.png"))
-        gaussian_thresh = thresholding.gaussian_thresholding(mask_image(im, global_thresh == 255), extra_thresh = global_thresh, blockSize = 41, C = 0.03, filename = get_filepath("gaussian_threshold.png"))
+    # determine regions highly likely to be either nuclei || background
+    print("Determing sure fg and bg...")
+    sure_fg, sure_bg = isolate_fg_bg(gaussian_thresh, filename = get_filepath("nuclei_background_isolation.png"))
+    unknown = cv.subtract(sure_bg,sure_fg)
 
-        # determine regions highly likely to be either nuclei || background
-        sure_fg, sure_bg = isolate_fg_bg(gaussian_thresh, filename = get_filepath("nuclei_background_isolation.png"))
-        unknown = cv.subtract(sure_bg,sure_fg)
+    # get markers -> "seed" positions
+    print("Determining markers...")
+    markers = get_markers(sure_fg, unknown, get_filepath("markers.png"))
 
-        # get markers -> "seed" positions
-        markers = get_markers(sure_fg, unknown, get_filepath("markers.png"))
+    # apply watershed algo
+    print("Applying watershed algorithm...")
+    base_image = mask_image(im, gaussian_thresh == 255)
+    base_image = cv.cvtColor(base_image, cv.COLOR_GRAY2BGR) # CV_8UC3
+    markers = watershed(base_image, markers, im, get_filepath("watershed.png"))
 
-        # apply watershed algo
-        base_image = mask_image(im, gaussian_thresh == 255)
-        base_image = cv.cvtColor(base_image, cv.COLOR_GRAY2BGR) # CV_8UC3
-        im = cv.cvtColor(im, cv.COLOR_GRAY2BGR)# CV_8UC3
-        markers = watershed(base_image, markers, im, get_filepath("watershed.png"))
+    """
+        Produces a border discrepancy in such the outer most layer of pixels is counted as a border
+    """
 
-        # save markers
-        np.savetxt(get_filepath("markers.csv"), markers, delimiter = ",")
-    else:
-        markers = np.genfromtxt(get_filepath("markers.csv"), delimiter = ",")
+    # save markers
+    print("Saving labels as a csv...")
+    np.savetxt(get_filepath("markers_pre_filtering.csv"), markers, delimiter = ",")
 
-    markers = filter_by_size(markers, min_limit = 36, filename = get_filepath("size_filtering.png"))
-    #markers = filter_by_brightness(im, markers, min_limit = 110, filename = False)
+    print("Filtering labels by size...")
+    markers = filter_by_size(markers, min_limit = 36, max_limit = 2**16 - 1, im = im, filename = get_filepath("size_filtering.png"))
+    np.savetxt(get_filepath("markers_post_filtering.csv"), markers, delimiter = ",")
+
+    plot_histogram(im[markers > 1], get_filepath("histogram.png"))
+
+    print("Done.")
 
 if __name__ == "__main__":
     main()

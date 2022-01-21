@@ -2,7 +2,7 @@ import numpy as np
 import cv2 as cv
 
 import thresholding
-from image_ops import save_multiple_images
+from image_ops import save_multiple_images, save_labels
 
 """
     Isolates fg and bg from the threshold
@@ -61,24 +61,11 @@ def get_markers(sure_fg, unknown, filename = False):
     @param markers: of type CV_32SC1 -> seeds
     @param display_image: image to use to display
 """
-def watershed(im, markers, display_image = False, filename = False):
+def watershed(im, markers, display_image = False, filename = None):
     # watershed
     markers = cv.watershed(im, markers)
 
-    if filename:
-        # if display image not given, draw outlines on im
-        if display_image is False: display_image = im
-
-        # draw outlines
-        display_image[markers == -1] = [0,0,255]
-
-        # convert labels to uint8 and apply JET colour map
-        markers_out = markers.astype(np.uint8)
-        markers_out = cv.applyColorMap(markers_out, cv.COLORMAP_JET)
-        
-        markers_out[markers == -1,] = (255,255,255) # white outlines
-        markers_out[markers == 1,] = (0,0,0) # black background
-        
-        save_multiple_images([display_image, markers_out], ["Segment outlines drawn in red", "Labels"], filename)
+    if filename is not None:
+        save_labels(display_image if display_image is not None else im, markers, filename)
 
     return markers
