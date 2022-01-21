@@ -20,7 +20,7 @@ def isolate_fg_bg(thresh, filename = False):
     
     # sure bg calculated by dilate the threshold
     kernel = np.ones((3,3), np.uint8)
-    sure_bg = cv.dilate(thresh, kernel, iterations=3)
+    sure_bg = cv.dilate(thresh, kernel, iterations=5)
         
     if filename is not False:
         save_multiple_images([dist_transform, sure_fg, sure_bg], ["Euclidean Distance Transformation", "Sure Foreground", "Sure Background"], filename)

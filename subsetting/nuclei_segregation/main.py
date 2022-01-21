@@ -21,8 +21,8 @@ elif not TESTING:
     OUTPUT = sys.argv[2]
 else:
     #FILEPATH = "/mnt/perkinsdata/tongue_STOmics/original/image- ssDNA and H&E/Mouse-tongue-5-Library Construction/FP200000495BR_E5.tif"
-    FILEPATH = "/mnt/perkinsdata/tongue_STOmics/discovery/nuclei_segregation/testing/FP200000495BR_E5_6000_3000.tif"
-    OUTPUT = "/mnt/perkinsdata/tongue_STOmics/discovery/nuclei_segregation/testing"
+    FILEPATH = "/mnt/perkinsdata/tongue_STOmics/discovery/nuclei_segregation/tongue-5_side_l/FP200000495BR_E5_side_l.tif"
+    OUTPUT = "/mnt/perkinsdata/tongue_STOmics/discovery/nuclei_segregation/tongue-5_side_l"
 
 def get_filepath(filename):
     return "%s/%s" % (OUTPUT, filename)
@@ -65,7 +65,7 @@ def main():
     markers = filter_by_size(markers, min_limit = 36, max_limit = 2**16 - 1, im = im, filename = get_filepath("size_filtering.png"))
     np.savetxt(get_filepath("markers_post_filtering.csv"), markers, delimiter = ",")
 
-    plot_histogram(im[markers > 1], get_filepath("histogram.png"))
+    plot_histogram(im[markers > 1], get_filepath("histogram_labels.png"))
 
     print("Done.")
 

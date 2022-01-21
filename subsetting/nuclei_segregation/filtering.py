@@ -2,7 +2,6 @@ import numpy as np
 import cv2 as cv
 
 from image_ops import save_multiple_images, plot_histogram, save_labels
-from axolotl_paper_process import get_filepath
 
 """
     If the given pixel is connected to a label, then returns True, else False
