@@ -1,0 +1,5 @@
+/data/Perkins/TongueSTOmics/scripts/subsetting/nuclei_segregation_cpp/CMakeFiles/edit_cache.dir
+/data/Perkins/TongueSTOmics/scripts/subsetting/nuclei_segregation_cpp/CMakeFiles/rebuild_cache.dir
+/data/Perkins/TongueSTOmics/scripts/subsetting/nuclei_segregation_cpp/src/CMakeFiles//data/Perkins/TongueSTOmics/scripts/subsetting/nuclei_segregation_cpp/NucleiSegregation.dir
+/data/Perkins/TongueSTOmics/scripts/subsetting/nuclei_segregation_cpp/src/CMakeFiles/edit_cache.dir
+/data/Perkins/TongueSTOmics/scripts/subsetting/nuclei_segregation_cpp/src/CMakeFiles/rebuild_cache.dir
