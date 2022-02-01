@@ -20,10 +20,10 @@ int get_params(int argc, char *argv[], OPTS* opts)
                 usage();
                 return 0;
             case 'i':
-                opts->input_path = strdup(optarg);
+                opts->input_file = strdup(optarg);
                 break;
             case 'o':
-                opts->output_path = strdup(optarg);
+                opts->output_dir = strdup(optarg);
                 break;
             default: 
                 printf("Unknown argument supplied.\n\n");
@@ -32,11 +32,11 @@ int get_params(int argc, char *argv[], OPTS* opts)
         }
     }
 
-    if (opts->input_path == NULL) {
+    if (opts->input_file == NULL) {
         printf("Please supply an input file.\n");
         return 1;
     }
-    if (opts->output_path == NULL) {
+    if (opts->output_dir == NULL) {
         printf("Please supply an output path.\n");
         return 1;
     }

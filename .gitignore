@@ -143,3 +143,4 @@ CMakeFiles
 venv
 Makefile
 *.cmake
+CMakeCache.txt
