@@ -21,8 +21,8 @@ elif not TESTING:
     OUTPUT = sys.argv[2]
 else:
     #FILEPATH = "/mnt/perkinsdata/tongue_STOmics/original/image- ssDNA and H&E/Mouse-tongue-5-Library Construction/FP200000495BR_E5.tif"
-    FILEPATH = "/mnt/perkinsdata/tongue_STOmics/discovery/nuclei_segregation/tongue-5_side_l/FP200000495BR_E5_side_l.tif"
-    OUTPUT = "/mnt/perkinsdata/tongue_STOmics/discovery/nuclei_segregation/tongue-5_side_l"
+    FILEPATH = "/mnt/perkinsdata/tongue_STOmics/discovery/nuclei_segregation/tongue-5_testing/FP200000495BR_E5.tif"
+    OUTPUT = "/mnt/perkinsdata/tongue_STOmics/discovery/nuclei_segregation/tongue-5_testing"
 
 def get_filepath(filename):
     return "%s/%s" % (OUTPUT, filename)
