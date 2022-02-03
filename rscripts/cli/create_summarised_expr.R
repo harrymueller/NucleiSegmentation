@@ -12,8 +12,8 @@ DefaultAssay(rds) = "RNA"
 
 # column data
 colData = data.frame(
-  "label.main" = unfactor(Idents(rds)),
-  "label.fine" = unfactor(Idents(rds))
+  "label.main" = unfactor(unique(Idents(rds))),
+  "label.fine" = unfactor(unique(Idents(rds)))
 )
 
 for (n in c("Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen")) {
@@ -22,14 +22,19 @@ for (n in c("Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eigh
 
 # SCT
 rds = SCTransform(rds)
-SCTData = rds@assays$SCT@data
 
-sct = SummarizedExperiment(assays = SCTData, rowData = rownames(SCTData), colData = colData)
+SCTData = AverageExpression(rds, assays = "SCT")
+SCTData = as.matrix(SCTData$SCT)
+
+sct = SummarizedExperiment(assays = list("logcounts" = SCTData), rowData = rownames(SCTData), colData = colData)
 saveRDS(sct, paste0(OUTPUT_PATH, "/cell_ref_SCT.rds"))
 
 # LN
+DefaultAssay(rds) = "RNA"
 rds = NormalizeData(rds, normalization.method = "LogNormalize")
-LNData = rds@assays$RNA@data
 
-ln = SummarizedExperiment(assays = LNData, rowData = rownames(SCTData), colData = colData)
+LNData = AverageExpression(rds, assays = "RNA")
+LNData = as.matrix(LNData$RNA)
+
+ln = SummarizedExperiment(assays = list("logcounts" = LNData), rowData = rownames(LNData), colData = colData)
 saveRDS(ln, paste0(OUTPUT_PATH, "/cell_ref_LN.rds"))

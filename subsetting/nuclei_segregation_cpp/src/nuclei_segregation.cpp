@@ -10,12 +10,16 @@ int main(int argc, char *argv[])
     // convert to C++ strings
     std::string output_dir = std::string(opts->output_dir);
 
-    // make image
+    // read image
     Image i(opts->input_file);
     
-    i.display();
-    Image i2 = i.duplicate();
-    i2.save(output_dir + std::string("/temp.png"));
+    // thresholding
+    // global_thresh = thresholding.global_thresholding(im, val = 100, filename = get_filepath("global_threshold.png"))
+    // gaussian_thresh = thresholding.gaussian_thresholding(mask_image(im, global_thresh == 255), extra_thresh = global_thresh, blockSize = 41, C = 0.03, filename = get_filepath("gaussian_threshold.png"))
+    std::cout << "Applying thresholds...\n";
+
+    
+
 
     exit(EXIT_SUCCESS);
 }
