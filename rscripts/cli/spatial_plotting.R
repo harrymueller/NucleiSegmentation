@@ -18,11 +18,11 @@ TONGUE_ID = argv$id
 DIAMETER  = argv$diameter
 
 # other consts
-OUTPUT_DIR = sprintf("/mnt/data/count_feature_plots/%s_bin%s", TONGUE_ID, BIN_SIZE)
+OUTPUT_DIR = sprintf("/mnt/data/R_analysis/count_feature_plots/%s_bin%s", TONGUE_ID, BIN_SIZE)
 if (is.null(DIAMETER)) {
-  INPUT_DIR = "/mnt/data/gemRDS"
+  INPUT_DIR = "/mnt/data/R_analysis/gemRDS"
 } else {
-  INPUT_DIR = "/mnt/data/subsets"
+  INPUT_DIR = "/mnt/data/R_analysis/subsets"
   OUTPUT_DIR = sprintf("%s_subset%s", OUTPUT_DIR, DIAMETER)
 }
 source("/mnt/data/scripts/rscripts/functions/accurate_plot.R")

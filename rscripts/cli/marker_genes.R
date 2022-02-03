@@ -14,7 +14,7 @@ library(RColorBrewer)
 source("/mnt/data/scripts/rscripts/functions/accurate_plot.R")
 
 # params
-DIR = "/mnt/data"
+DIR = "/mnt/data/R_analysis"
 
 # arg parsing
 library(argparser)

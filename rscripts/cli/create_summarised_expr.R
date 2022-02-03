@@ -25,11 +25,11 @@ rds = SCTransform(rds)
 SCTData = rds@assays$SCT@data
 
 sct = SummarizedExperiment(assays = SCTData, rowData = rownames(SCTData), colData = colData)
-saveRDS(sct, paste0(OUTPUT_PATH, "/cell_ref_sct.rds"))
+saveRDS(sct, paste0(OUTPUT_PATH, "/cell_ref_SCT.rds"))
 
 # LN
 rds = NormalizeData(rds, normalization.method = "LogNormalize")
 LNData = rds@assays$RNA@data
 
 ln = SummarizedExperiment(assays = LNData, rowData = rownames(SCTData), colData = colData)
-saveRDS(ln, paste0(OUTPUT_PATH, "/cell_ref_ln.rds"))
+saveRDS(ln, paste0(OUTPUT_PATH, "/cell_ref_LN.rds"))

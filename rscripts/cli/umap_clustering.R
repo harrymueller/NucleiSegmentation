@@ -25,10 +25,10 @@ METHOD_NAME = ifelse(METHOD == "SCT", "SCTransform", "NormalizeData")
 METHOD_FOLDER = ifelse(METHOD == "SCT", "scDimReducedRDS", "dimReducedRDS")
 
 # other consts
-INPUT_DIR = "/mnt/data/dimReduction"
+INPUT_DIR = "/mnt/data/R_analysis/dimReduction"
 NAME = sprintf("%s_bin%s_subset%s_res%s", TONGUE_ID, BINSIZE, DIAMETER, round(RESOLUTION, 1))
-PLOTS_DIR = sprintf("/mnt/data/umap_clusters/%s/plots", METHOD_NAME)
-RDS_DIR = sprintf("/mnt/data/umap_clusters/%s/RDS", METHOD_NAME)
+PLOTS_DIR = sprintf("/mnt/data/R_analysis/umap_clusters/%s/plots", METHOD_NAME)
+RDS_DIR = sprintf("/mnt/data/R_analysis/umap_clusters/%s/RDS", METHOD_NAME)
 
 source("/mnt/data/scripts/rscripts/functions/accurate_plot.R")
 

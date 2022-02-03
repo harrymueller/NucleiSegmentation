@@ -20,10 +20,10 @@ DIAMETER = argv$diameter
 METHOD_NAME = ifelse(METHOD == "SCT", "SCTransform", "NormalizeData")
 
 if (DIAMETER == 0) {
-  INPUT_DIR = "/mnt/data/gemRDS"
+  INPUT_DIR = "/mnt/data/R_analysis/gemRDS"
   INPUT = sprintf("%s/%s_bin%s_spatialObj.rds", INPUT_DIR, TONGUE_ID, BIN_SIZE)
 } else {
-  INPUT_DIR = "/mnt/data/subsets"
+  INPUT_DIR = "/mnt/data/R_analysis/subsets"
   INPUT = sprintf("%s/%s_bin%s_subset%s.rds", INPUT_DIR, TONGUE_ID, BIN_SIZE, DIAMETER)
 }
 
@@ -31,17 +31,17 @@ obj = readRDS(INPUT)
 
 if (METHOD == "SCT") {
     if (DIAMETER == 0)
-        OUTPUT = sprintf("/mnt/data/dimReduction/%s/%s_bin%s_red.Rds", METHOD_NAME, TONGUE_ID, BIN_SIZE)
+        OUTPUT = sprintf("/mnt/data/R_analysis/dimReduction/%s/%s_bin%s_red.Rds", METHOD_NAME, TONGUE_ID, BIN_SIZE)
     else
-        OUTPUT = sprintf("/mnt/data/dimReduction/%s/%s_bin%s_subset%s_red.Rds", METHOD_NAME, TONGUE_ID, BIN_SIZE, DIAMETER)
+        OUTPUT = sprintf("/mnt/data/R_analysis/dimReduction/%s/%s_bin%s_subset%s_red.Rds", METHOD_NAME, TONGUE_ID, BIN_SIZE, DIAMETER)
     
     obj <- SCTransform(obj, assay = "Spatial", verbose = FALSE)
     obj <- RunPCA(obj, assay = "SCT", verbose = FALSE)
 } else if (METHOD == "LN") {
     if (DIAMETER == 0) {
-        OUTPUT = sprintf("/mnt/data/dimReducedRDS/%s_bin%s_red.Rds", TONGUE_ID, BIN_SIZE)
+        OUTPUT = sprintf("/mnt/data/R_analysis/dimReducedRDS/%s_bin%s_red.Rds", TONGUE_ID, BIN_SIZE)
     } else {
-        OUTPUT = sprintf("/mnt/data/dimReducedRDS/%s_bin%s_subset%s_red.Rds", TONGUE_ID, BIN_SIZE, DIAMETER)
+        OUTPUT = sprintf("/mnt/data/R_analysis/dimReducedRDS/%s_bin%s_subset%s_red.Rds", TONGUE_ID, BIN_SIZE, DIAMETER)
     }
     
     obj <- NormalizeData(obj, assay = "Spatial", verbose = FALSE)
