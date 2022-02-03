@@ -7,15 +7,7 @@ suppressMessages(library(SingleR))
 suppressMessages(library(dplyr))
 suppressMessages(library(tibble))
 suppressMessages(library(xlsx))
-
-# temp until rebuilt docker
-if (!requireNamespace("scibetR", quietly = TRUE))
-  devtools::install_github("zwj-tina/scibetR")
 suppressMessages(library(scibetR))
-
-# celldex for reference dataset
-if (!requireNamespace("celldex", quietly = TRUE))
-  BiocManager::install("celldex")
 
 # FN for accurate spatial plotting
 source("/mnt/data/scripts/rscripts/functions/accurate_plot.R")
@@ -23,7 +15,7 @@ source("/mnt/data/scripts/rscripts/functions/accurate_plot.R")
 ##############################
 # PARAMS
 ##############################
-DIR = "/mnt/data"
+DIR = "/mnt/data/R_analysis"
 
 # arg parsing
 library(argparser)
@@ -33,6 +25,7 @@ args <- add_argument(args, "--binsize", help = "binsize")
 args <- add_argument(args, "--method", help="method of normalisation, SCT || LN")
 args <- add_argument(args, "--diameter", help="supply the diameter, 0 if not subsetting")
 args <- add_argument(args, "--resolution", help="seurat FindCluster resolution", default=0.5)
+args <- add_argument(args, "--reference", help="Path to RDS reference file", default=NULL)
 argv <- parse_args(args)
 
 TONGUE_ID   = argv$id
@@ -40,6 +33,7 @@ METHOD      = argv$method
 BINSIZE     = as.integer(argv$binsize)
 DIAMETER    = as.integer(argv$diameter)
 RESOLUTION  = as.double(argv$resolution)
+REFERENCE   = argv$reference
 
 # other required variables
 METHOD_NAME = ifelse(METHOD == "SCT", "SCTransform", "NormalizeData")
@@ -57,9 +51,12 @@ print("############################################################")
 print(paste0("Starting ", FOLDER_NAME, "..."))
 print("############################################################")
 
-# ref data
-RefData = celldex::MouseRNAseqData()
-
+if (is.null(REFERENCE)) {
+  # use celldex
+  RefData = celldex::MouseRNAseqData()
+} else {
+  RefData = readRDS(REFERENCE)
+}
 ##############################
 # FUNCTIONS
 ##############################

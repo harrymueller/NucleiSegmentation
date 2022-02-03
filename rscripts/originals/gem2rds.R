@@ -65,7 +65,7 @@ LoadBGI_Spatial <- function(filename,
         tissue_lowres_image_r <- raster::raster(tissue_lowres_image)
         tissue_lowres_image_r <- raster::writeRaster(tissue_lowres_image_r, file.path(outdir, paste0(pro_name, "_UMIGreyScaleFakeIMG.tiff")), overwrite=T)
     } else tissue_lowres_image <- matrix(0, max(bin.coor$y), max(bin.coor$x))
-
+    
     geneID <- seq(length(unique(dat$geneID)))
     hash.G <- data.frame(row.names = unique(dat$geneID), values = geneID)
     gen <- hash.G[dat$geneID, "values"]
