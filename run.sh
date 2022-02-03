@@ -14,7 +14,7 @@ else
             --method ${NORM_METHOD[$i]} \
             --binsize ${BINSIZE[$i]} \
             --diameter ${DIAMETER[$i]} \
-            --resolution ${RESOLUTION[$i]}
+            --resolution ${RESOLUTION[$i]} \
+	    --reference /mnt/data/R_analysis/cell_reference/cell_ref_${NORM_METHOD[$i]}.rds
     done
-
 fi
