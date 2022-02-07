@@ -1,7 +1,11 @@
+#ifndef IMAGE_
+#define IMAGE_
+
 #include <stdio.h>
 
 // cv
 #include <opencv2/opencv.hpp>
+#include <opencv2/core.hpp>
 using namespace cv;
 
 class Image {
@@ -12,6 +16,9 @@ class Image {
         Image(std::string filename);
         Image(Mat im);
 
+        // destructor
+        ~Image();
+
         // accessor methods
         Mat get_im();
         void set_im(Mat);
@@ -21,8 +28,12 @@ class Image {
         int save(std::string);
         Image duplicate();
 
+        Image applyMask(Mat);
+        Image subtract(Image);
 
     private:
         // attributes
-        Mat im;
+        Mat im; // image matrix
 };
+
+#endif

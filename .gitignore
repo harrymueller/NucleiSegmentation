@@ -144,3 +144,4 @@ venv
 Makefile
 *.cmake
 CMakeCache.txt
+NucleiSegregation

@@ -14,7 +14,7 @@ Image::Image(Mat im)
 
 Image::Image(std::string filename)
 {
-    this->im = imread( filename, 1 );
+    this->im = imread( filename, IMREAD_GRAYSCALE );
     isValid(this->im);
 }
 
@@ -23,6 +23,14 @@ void isValid(Mat im) {
         printf("Invalid input image.\n");
         exit(EXIT_FAILURE);
     }
+}
+
+/*##############################
+    DESTRUCTOR
+##############################*/
+Image::~Image()
+{
+    ~this->im;
 }
 
 /*##############################
@@ -59,4 +67,20 @@ int Image::save(std::string filename)
 Image Image::duplicate() 
 {
     return Image(this->im);
+}
+
+// Pixels where mask != 0 are copied to a new Image obj
+Image Image::applyMask(Mat mask)
+{
+    Mat dest;
+    copyTo(this->get_im(), dest, mask);
+    return Image(dest);
+}
+
+// subtracts the provided image from this image
+Image Image::subtract(Image other) 
+{
+    Mat dest;
+    cv::subtract(this->get_im(), other.get_im(), dest);
+    return Image(dest);
 }

@@ -23,3 +23,12 @@ extern "C" int get_params(int, char **, OPTS *);
 
 // image
 #include "image.hpp"
+
+// thresholds
+#include "thresholds.hpp"
+
+// sure fg and bg
+#include "fg_bg.hpp"
+
+// watershed
+#include "watershed.hpp"
