@@ -11,6 +11,9 @@ using namespace cv;
 // image class
 #include "image.hpp"
 
+/*
+    Wrappers for threshold functions in OpenCV
+*/
 namespace Thresholds {
     Image global_threshold(Image, double, double maxValue = 255, int type = THRESH_BINARY);
     Image gaussian_threshold(Image, int, double, double maxValue = 255, 

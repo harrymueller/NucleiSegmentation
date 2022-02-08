@@ -1,6 +1,12 @@
 #include "nuclei_segregation.hpp"
-//#include "global_vars.h"
 
+/* TODO erode seeds?
+    Q. erode seeds?
+    Improve algo
+    Improve UI
+    Q. WTF did unknown do previously???
+    Rename seeds / markers to be consistant
+*/
 int main(int argc, char *argv[])
 {
     // params
@@ -12,43 +18,38 @@ int main(int argc, char *argv[])
 
     // read image
     Image orig(opts->input_file);
-    
+    orig.save(output_dir + "/1 original.png");
+
     // thresholding
     std::cout << "Applying thresholds...\n";
+    Image thresholded = orig.duplicate();
 
-    Image globalI = Thresholds::global_threshold(orig, 100);
-    Image gaussianI = Thresholds::gaussian_threshold(orig, 41, 0.03);
+    Image globalI = Thresholds::global_threshold(thresholded, 100);
+    thresholded.applyMask(globalI);
+
+    Image gaussianI = Thresholds::gaussian_threshold(thresholded, 41, 0.03);
+    thresholded.applyMask(gaussianI);
     
-    Image thresholded = orig.applyMask(globalI.get_im());
-    thresholded = thresholded.applyMask(gaussianI.get_im());
-    
-    thresholded.save(output_dir + "/thresholded.png");
+    thresholded.save(output_dir + "/2 thresholded.png");
 
     globalI.~Image(); gaussianI.~Image(); // cleaning up
 
-    // isolating known fg and bg
+    // isolate known fg
     Image sure_fg = FG_BG::get_sure_fg(thresholded);
-    sure_fg.save(output_dir + "/sure_fg.png");
+    sure_fg.save(output_dir + "/3 sure_fg.png");
 
-    Image sure_bg = FG_BG::get_sure_bg(thresholded);
-    sure_bg.save(output_dir + "/sure_bg.png");
+    // get markers from fg
+    Image markers = Watershed::get_markers(sure_fg);
+    sure_fg.~Image();
 
-    Image unknown = sure_bg.subtract(sure_fg);
+    // apply watershed algo
+    markers = Watershed::apply_watershed(thresholded, markers);
 
-    // watershed
-    Image markers = Watershed::get_markers(unknown, sure_fg); // TODO check that this works
-    
-    Image base_image = orig.applyMask(thresholded.get_im());
-    Mat base_im;
-    base_image.get_im().convertTo(base_im, CV_8UC3);
-    base_image = Image(base_im);
-    
-    watershed(base_image.get_im(), markers.get_im());
-    markers.display();
-    // TODO erode seeds?
-    // TODO commenting in functions
-    // TODO need Image class? or just use as namespace or smth?
-        // extend Mat class?
+    // outline segments, display and save
+    Image watershed_outlined = Watershed::outline(orig, markers);
+    watershed_outlined.display();
+    watershed_outlined.save(output_dir + "/4 segmented.png");
+
 
     exit(EXIT_SUCCESS);
 }

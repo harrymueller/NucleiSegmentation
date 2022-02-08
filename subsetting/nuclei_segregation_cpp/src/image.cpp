@@ -49,6 +49,7 @@ void Image::set_im(Mat im)
 /*##############################
     METHODS
 ##############################*/
+// displays this image in a window
 int Image::display() 
 {
     namedWindow("Display Image", WINDOW_AUTOSIZE );
@@ -57,6 +58,7 @@ int Image::display()
     return 0;
 }
 
+// saves this image to the filename given
 int Image::save(std::string filename) 
 {
     bool x = imwrite(filename, this->im);
@@ -64,23 +66,53 @@ int Image::save(std::string filename)
     return x ? 0 : 1;
 }   
 
+// returns a copy of this obj 
 Image Image::duplicate() 
 {
-    return Image(this->im);
+    return Image(this->im.clone());
 }
 
 // Pixels where mask != 0 are copied to a new Image obj
-Image Image::applyMask(Mat mask)
+void Image::applyMask(Image mask)
 {
     Mat dest;
-    copyTo(this->get_im(), dest, mask);
-    return Image(dest);
+    this->im.copyTo(dest, mask.get_im());
+    this->set_im(dest);
+}
+void Image::applyMask(Mat mask)
+{
+    Mat dest;
+    this->im.copyTo(dest, mask);
+    this->set_im(dest);
 }
 
+
 // subtracts the provided image from this image
-Image Image::subtract(Image other) 
+void Image::subtract(Image other) 
 {
-    Mat dest;
-    cv::subtract(this->get_im(), other.get_im(), dest);
-    return Image(dest);
+    cv::subtract(this->im, other.get_im(), this->im);
+}
+
+// converts this to a new colour (e.g. COLOR_GRAY2BGR)
+void Image::convertColour(int new_colour)
+{
+    cvtColor(this->im, this->im, new_colour);
+}
+
+// converts this image to a new type (e.g. CV_8UC1)
+void Image::convertType(int new_type)
+{
+    this->im.convertTo(this->im, new_type);
+}   
+
+// for each pixel in this, call func at each point w/ <this->im, image.get_im(), i, j>
+void Image::loop(Image image, std::function<void(Mat, Mat, int, int)> func)
+{
+    int i,j;
+
+    for ( i = 0; i < this->im.rows; i++ ) {
+        for ( j = 0; j < this->im.cols; j++ ) {
+            func(this->im, image.get_im(), i, j);
+        }
+    }
 }

@@ -11,7 +11,8 @@ using namespace cv;
 #include "image.hpp"
 
 namespace Watershed {
-    Image get_markers(Image, Image);
+    Image get_markers(Image);
     Image apply_watershed(Image, Image);
+    Image outline(Image, Image);
 }
 #endif

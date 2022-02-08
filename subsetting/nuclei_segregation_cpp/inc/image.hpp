@@ -8,6 +8,10 @@
 #include <opencv2/core.hpp>
 using namespace cv;
 
+/*
+    Image class:
+        stores a cv::Mat obj, and provides many methods for the given matrix
+*/
 class Image {
     public:
         // attributes
@@ -28,9 +32,15 @@ class Image {
         int save(std::string);
         Image duplicate();
 
-        Image applyMask(Mat);
-        Image subtract(Image);
+        void applyMask(Image);
+        void applyMask(Mat);
 
+        void subtract(Image);
+
+        void convertColour(int);
+        void convertType(int);
+
+        void loop(Image, std::function<void(Mat, Mat, int, int)>);
     private:
         // attributes
         Mat im; // image matrix
