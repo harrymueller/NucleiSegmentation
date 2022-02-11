@@ -189,16 +189,21 @@ scibet_annotations <- function (bUseMainLabels) {
     genes = SelectGene_R(train, k =100)
     genes = genes[genes %in% colnames(test)][1:50]
     
-    p = scibet::Marker_heatmap(test, genes) + 
-                         ggtitle(sprintf("Dot plot of 50 informative training genes\nas determined by the SciBet Entropy-Test\n%s_bin%s%s", 
-                                            TONGUE_ID, BINSIZE, 
-                                            ifelse(DIAMETER == 0, "", paste0("_subset",DIAMETER)))) + 
-                        theme(text = element_text(size = 26), 
-                              axis.text.y = element_text(size = 24),
-                              axis.text.x = element_text(vjust = 0.5, size = 20),
-                              legend.title = element_text(size = 24),
-                              legend.text = element_text(size = 20))
-    ggsave(paste0(OUTPUT_DIR, "/scibet_dotplot_", ifelse(bUseMainLabels, "main", "fine"), ".png"), p, width = 20, height = 12, dpi = 200)
+    tryCatch({
+      p = scibet::Marker_heatmap(test, genes) + 
+        ggtitle(sprintf("Dot plot of 50 informative training genes\nas determined by the SciBet Entropy-Test\n%s_bin%s%s", 
+                        TONGUE_ID, BINSIZE, 
+                        ifelse(DIAMETER == 0, "", paste0("_subset",DIAMETER)))) + 
+        theme(text = element_text(size = 26), 
+              axis.text.y = element_text(size = 24),
+              axis.text.x = element_text(vjust = 0.5, size = 20),
+              legend.title = element_text(size = 24),
+              legend.text = element_text(size = 20))
+      ggsave(paste0(OUTPUT_DIR, "/scibet_dotplot_", ifelse(bUseMainLabels, "main", "fine"), ".png"), p, width = 20, height = 12, dpi = 200)
+    }, error = function(cond) {
+      print("Couldn't make a dotplot of 50 information genes.")
+    })
+    
     return(obj)
 }
 
