@@ -2,11 +2,15 @@
 #define IMAGE_
 
 #include <stdio.h>
+#include <iostream>
+#include <fstream>
 
 // cv
 #include <opencv2/opencv.hpp>
 #include <opencv2/core.hpp>
 using namespace cv;
+
+
 
 /*
     Image class:
@@ -40,7 +44,10 @@ class Image {
         void convertColour(int);
         void convertType(int);
 
-        void loop(Image, std::function<void(Mat, Mat, int, int)>);
+        void apply(Image, std::function<void(Mat, Mat, int, int)>);
+        void apply(std::function<void(Mat, int, int)>);
+
+        void save_to_csv(std::string);
     private:
         // attributes
         Mat im; // image matrix

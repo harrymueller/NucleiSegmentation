@@ -32,3 +32,6 @@ extern "C" int get_params(int, char **, OPTS *);
 
 // watershed
 #include "watershed.hpp"
+
+// binning
+#include "io.hpp"

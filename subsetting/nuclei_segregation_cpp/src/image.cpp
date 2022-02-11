@@ -102,11 +102,13 @@ void Image::convertColour(int new_colour)
 // converts this image to a new type (e.g. CV_8UC1)
 void Image::convertType(int new_type)
 {
-    this->im.convertTo(this->im, new_type);
+    Mat new_im;
+    this->im.convertTo(new_im, new_type);
+    this->set_im(new_im);
 }   
 
 // for each pixel in this, call func at each point w/ <this->im, image.get_im(), i, j>
-void Image::loop(Image image, std::function<void(Mat, Mat, int, int)> func)
+void Image::apply(Image image, std::function<void(Mat, Mat, int, int)> func)
 {
     int i,j;
 
@@ -115,4 +117,31 @@ void Image::loop(Image image, std::function<void(Mat, Mat, int, int)> func)
             func(this->im, image.get_im(), i, j);
         }
     }
+}
+// for each pixel in this, call func at each point w/ <this->im, i, j>
+void Image::apply(std::function<void(Mat, int, int)> func)
+{
+    int i,j;
+
+    for ( i = 0; i < this->im.rows; i++ ) {
+        for ( j = 0; j < this->im.cols; j++ ) {
+            func(this->im, i, j);
+        }
+    }
+}
+
+// save the image values to a file
+void Image::save_to_csv(std::string filename)
+{
+    std::ofstream file;
+    file.open(filename);
+
+    for ( int i = 0; i < this->im.rows; i++ ) {
+        for ( int j = 0; j < this->im.cols; j++ ) {
+            file << this->im.at<int>(i,j) << ",";
+        }
+        file << "\n";
+    }
+
+    file.close();
 }

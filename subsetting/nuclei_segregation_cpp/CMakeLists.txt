@@ -1,5 +1,3 @@
-cmake_minimum_required( VERSION 2.8 )
 project(NucleiSegregation)
-include_directories( inc )
-
-add_subdirectory(src)
+include_directories( inc inc/watershed inc/binning )
+add_subdirectory( src )
