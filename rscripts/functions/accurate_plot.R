@@ -28,7 +28,7 @@ accurate_plot <- function (data, # dataframe with y,x,value
   }
 
   background = element_rect(fill=ifelse(black_background, "black", "white"))
-  
+  #background = element_rect(fill="grey")
   p = ggplot(data=data, mapping=aes(x=x, y = y)) + 
       geom_raster(aes(fill=values), hjust=0, vjust=0) +
       coord_equal() +

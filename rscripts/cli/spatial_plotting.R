@@ -4,6 +4,7 @@ library(ggplot2)
 library(patchwork)
 library(raster)
 library(RColorBrewer)
+library(viridis)
 
 # params
 library(argparser)
@@ -45,7 +46,6 @@ colours = rev(brewer.pal(n = 11, name = "Spectral"))
 i = 0
 #for (t in c("nCount_Spatial", "nFeature_Spatial", "Malat1", "Neat1")) {
 for (t in GENES) {
-  print(sprintf("%d/%d %s", i, length(GENES), t))
   if (BIN_SIZE > 11) {
     #left_plot = VlnPlot(obj, features = t, pt.size = 0.05) + NoLegend()
     isGene = t %in% GENES
