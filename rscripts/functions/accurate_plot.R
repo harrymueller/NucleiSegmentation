@@ -8,9 +8,14 @@ accurate_plot <- function (data, # dataframe with y,x,value
                            adjust = 1, # whether to limit to a given quantile (1 = no)
                            custom_colours = c(), # vector of colours
                            left_plot = c(), # ggplot obj to plot the left of this
-                           black_background = FALSE # whether to plot over a black background
+                           black_background = FALSE, # whether to plot over a black background
+                           spot_mapping = NULL # pass a spot mapping if required
                           ) {
-  names(data) = c("y", "x", "values")
+  if (!is.null(spot_mapping)) {
+    names(data) = c("imagerow", "imagecol", "values") # ensures correct names
+    data = merge(data, spot_mappings, by.x = c("imagerow", "imagecol"), by.y = c("cy", "cx"))
+    data = data[c("y", "x", "values")]
+  }
   
   x = max(data$x)+1
   y = max(data$y)

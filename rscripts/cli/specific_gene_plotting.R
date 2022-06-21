@@ -19,14 +19,20 @@ args <- add_argument(args, "--save_to_csv", help = " ", default = NULL)
 argv <- parse_args(args)
 
 
-BIN_SIZE  = c(1) #, 1)
-TONGUE_ID = c("tongue-4", "tongue-5")
+BIN_SIZE  = c(10) #, 1)
+TONGUE_ID = c("tongue-4", "tongue-5")#, "tongue-5")
 DIAMETER  = NULL # argv$diameter
-SAVE_TO_CSV = T#!is.null(argv$save_to_csv)
+SAVE_TO_CSV = F#!is.null(argv$save_to_csv)
 
 #GENES = c("Krt36", "Krt84", "Krt35", "Krt6b", "Krt6a", "Dmd", "Neb", "Ttn", "Rbfox1", "C1qtnf7", "Dclk1", "Mmp16", "Mecom", "Plcb1", "Flt1", "Fetub", "Ecm1", "Fmo2", "Pappa", "Hs3st5", "St3gal4", "Mki67", "Cenpf", "Cenpe", "Frem2", "Sema3c", "Pcdh7", "Unc5c", "Cpm", "Hhip", "Hephl1") 
-GENES = c("Krt4", "Krt6b", "Tchh", "Mki67")
+#GENES = c("Krt4", "Krt6b", "Tchh", "Mki67")
 #GENES = c("Tchh", "Krt6b", "Krt4")
+#GENES = c("Gsn", "Ttn", "Mpz", "Krt13", "Ttn", "Mpz", "Frem2", "Efna5", "Krt86", "Frem2", "Cpm", "Krt84", "Kcnq5", "Pir", "Fetub", "Lef1", "Runx2", "Tchh", "Krt15", "Krt76", "Krt84", "Krt76", "Krt84", "Krt78")
+GENES = c("Acta2")
+#library(data.table)
+#library(readxl)
+#GENES = as.data.frame(read_excel("bin10_plots.xlsx", col_names = F, sheet = 1))[,1]
+#print(GENES)
 
 # output directory
 INPUT_DIR = "/mnt/data/R_analysis/gemRDS"
@@ -54,11 +60,16 @@ for (id in TONGUE_ID) {
         i = 1
         
         df = NULL
+
+        mask = (GENES %in% rownames(obj))
+        #fwrite(list(GENES[!mask]), file = paste0(output_dir, "/genes_not_found.txt"))
         
-        for (t in GENES) {
-            print(sprintf("%d/%d %s", i, length(GENES), t))
+        this_genes = GENES[mask]
+
+        for (t in this_genes) {
+            print(sprintf("%d/%d %s", i, length(this_genes), t))
             i = i + 1;
-            
+
             data = SpatialPlot(obj, features = t)$data
             if (argv$extra == "log") {
               data[,3] = log(data[,3] + 1)
