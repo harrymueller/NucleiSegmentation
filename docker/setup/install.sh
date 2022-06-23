@@ -115,6 +115,9 @@ apt-get install openjdk-17-jdk -y
 # scRNAseq R-lib
 apt-get install libghc-bzlib-dev -y
 
+# opencv lib
+pip install opencv-python
+
 ##############################
 # Finished
 ##############################
