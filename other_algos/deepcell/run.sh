@@ -1,5 +1,6 @@
 #!/bin/bash
-export DATA_DIR=/mnt/perkinsdata/tongue_STOmics/discovery/deepcell/tongue-4
+#export DATA_DIR=/mnt/perkinsdata/tongue_STOmics/discovery/deepcell/tongue-4
+export DATA_DIR=/mnt/stomics/deepcell/tongue-5
 export MOUNT_DIR=/data
 export APPLICATION=mesmer
 export NUCLEAR_FILE=01_cropping/cropped.png
