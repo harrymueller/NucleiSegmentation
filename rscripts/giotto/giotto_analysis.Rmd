@@ -1,0 +1,169 @@
+---
+title: "Giotto Analysis"
+---
+
+## Task description
+You'll need the functionality called PAGE cell type enrichment analysis, and you'll also need to get Seurat object for SN data from Irina (with cell type annotations) to calculate DEGs and use them for PAGE. DEGs that worked well for the ovarian data: "We used Giotto [PMID: 33685491] to estimate cell type enrichment across different spots in each of the Visium samples. To identify gene sets for the enrichment analysis we used our scRNA-seq dataset. First, differentially expressed genes were calculated pairwise for each possible pair of the twelve cell types. This was done using the FindMarkers function in Seurat with the minimum detection rate threshold of 0.5. For each cell type, we then selected genes that passed the thresholds of logFC >= 0.5 and FDR < 0.05 in at least 10 out of the 11 pair-wise tests (i.e. genes that were significantly differentially over-expressed in that cell type when compared to at least 10 of the other cell types). We next removed genes that were identified this way for more than one cell type. The rest of the genes were then used as input for the PAGE algorithm in Giotto, which calculated enrichment scores for the corresponding cell types for each Visium spot. Our approach failed to identify suitable gene sets for four of the cell types "
+
+```{r}
+OUTPUT_DIR = "/mnt/data/R_analysis/page"
+INPUT_DIR = "/mnt/data/sn_data"
+
+PART = "Spl5Part1"
+SAMPLE_NAME = "t"
+```
+
+
+### installing packages
+```{r}
+if (!requireNamespace("Giotto", quietly=T)) remotes::install_github("RubD/Giotto") 
+if (!requireNamespace("rio", quietly=T)) install.packages("rio")
+```
+
+```{r}
+library(Giotto)
+library(Seurat)
+```
+
+
+# DEG from SN Data
+## Load SN Data
+```{r}
+sn_data_dir = "/mnt/data/sn_data/data_for_Harry/z_GlobalWithEpithelial_2May22.rds"
+sn_data = readRDS(sn_data_dir)
+```
+
+```{r}
+sn_data@meta.data["original_nums"] = Idents(sn_data)
+Idents(sn_data) = factor(sn_data@meta.data$TopLevelAnnot)
+```
+
+## DEGs
+Calculate DEGs for each of the cell-types
+```{r}
+cell_types = levels(Idents(sn_data))
+DEGs = list()
+for (ct in cell_types) {
+  tryCatch({
+    DEGs[[ct]] <- FindMarkers(sn_data, ident.1 = ct, verbose = T, logfc.threshold = 0.5, min.pct = 0.5, test.use = "wilcox")
+  }, error = function(e) {
+    print(e)
+    print(paste0(ct,"; no degs"))
+    DEGs[ct] = 0
+  }) 
+}
+```
+
+Remove duplicate DEGs
+```{r}
+# create a list containing all genes
+all_genes = c()
+for (ct in cell_types) {
+  # Remove DEGs w/ FDR > 0.05
+  DEGs[[ct]] = DEGs[[ct]][DEGs[[ct]]$p_val_adj <= 0.05,]
+  
+  all_genes = append(all_genes, rownames(DEGs[[ct]]))
+}
+```
+
+```{r}
+dup_genes = unique(all_genes[duplicated(all_genes)])
+giotto_markers = list()
+for (ct in cell_types) {
+  genes = rownames(DEGs[[ct]])
+  giotto_markers[[ct]] = genes[!genes %in% dup_genes]
+}
+```
+
+Save DEGs to file
+```{r}
+capture.output(giotto_markers, file = file.path(OUTPUT_DIR, "giotto_markers.txt"))
+saveRDS(giotto_markers, file.path(OUTPUT_DIR, "giotto_markers.Rds"))
+```
+
+```{r}
+giotto_markers = readRDS(file.path(OUTPUT_DIR, "giotto_markers.Rds"))
+```
+
+
+## Convert to PAGE matrix
+```{r}
+matrix = makeSignMatrixPAGE(sign_names = names(giotto_markers),
+                            sign_list = giotto_markers)
+```
+
+# PAGE Enrichment
+## Load spatial data
+### bin10 - too much data
+```{r}
+counts = t(as(Matrix::readMM(file.path(INPUT_DIR, PART, paste0(PART, ".raw.count.mtx"))), "dgCMatrix"))
+gene_ids = read.csv(file.path(INPUT_DIR, PART, paste0(PART, ".raw.geneid.csv")), row.names = NULL)$row.names
+
+spatial_locations = read.csv(file.path(INPUT_DIR, PART, paste0(PART, ".raw.binid.csv")))
+```
+
+```{r}
+norm_counts = as(Matrix::readMM(file.path(INPUT_DIR, PART, paste0(PART, ".raw.corrected.count.mtx"))), "dgCMatrix")
+norm_gene_ids = read.csv(file.path(INPUT_DIR, PART, paste0(PART, ".raw.sct.geneid.csv")), row.names = NULL)$X
+
+norm_spatial_locations = read.csv(file.path(INPUT_DIR, PART, paste0(PART, ".raw.sct.binid.csv")))
+```
+
+### testing if adding norm data before hand means giotto doesnt have to normalize
+```{r}
+mask = gene_ids %in% norm_gene_ids
+new_gene_ids = gene_ids[mask]
+new_counts = counts[mask,]
+```
+
+
+
+
+```{r}
+giotto = createGiottoObject(new_counts, spatial_locs = spatial_locations[c("x", "y")], gene_metadata = new_gene_ids, norm_expr= norm_counts)
+```
+
+## seurat (bigger bins)
+```{r}
+seurat = readRDS(file.path("/mnt/data/R_analysis/gemRDS", "tongue-5_bin20_spatialObj.rds"))
+
+counts = seurat@assays$Spatial@counts
+spatial_locations = seurat@images$slice1@coordinates[c("row", "col")]
+colnames(spatial_locations) = c("x", "y")
+
+giotto = createGiottoObject(counts, spatial_locs = spatial_locations)
+```
+
+
+```{r}
+#giotto <- normalizeGiotto(gobject = giotto)
+giotto = runPAGEEnrich(gobject = giotto,
+                       sign_matrix = matrix,
+                       min_overlap_genes = 2)
+```
+
+## 
+
+```{r}
+source("/mnt/data/scripts/rscripts/functions/accurate_plot.R")
+```
+
+```{r}
+giotto = readRDS(file.path(OUTPUT_DIR, "giotto_bin50_t5.rds"))
+cell_types = names(giotto@spatial_enrichment$PAGE)[2:16]
+
+
+page_enrichment = giotto@spatial_enrichment$PAGE
+coords = giotto@spatial_locs
+page_enrichment = merge(page_enrichment, coords, by = "cell_ID")
+
+for (ct in cell_types) {
+  dat = cbind(page_enrichment[,c("sdimy", "sdimx")], page_enrichment[[ct]])
+  accurate_plot(dat, filename = file.path(OUTPUT_DIR, paste0(SAMPLE_NAME, "_", ct, ".png")))
+}
+```
+
+
+
+
+

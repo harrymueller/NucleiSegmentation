@@ -118,6 +118,9 @@ apt-get install libghc-bzlib-dev -y
 # opencv lib
 pip install opencv-python
 
+# other
+apt-get install libglpk-dev libgsl-dev -y
+
 ##############################
 # Finished
 ##############################
