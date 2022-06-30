@@ -164,6 +164,126 @@ for (ct in cell_types) {
 ```
 
 
+# cell labelling
+```{r}
+page = readRDS("/mnt/data/R_analysis_original/page/tongue-5_bin50/page_enrichment.Rds")
+seurat = readRDS("/mnt/data/R_analysis_original/gemRDS/original_gems/tongue-5_bin50_spatialObj.rds")
+fracs = readxl::read_excel("/mnt/data/R_analysis_original/page/tongue-5_bin50/Expected pixel fractions.xlsx",  col_names = c("cell_types", "fraction"))
+```
+
+## ranking
+```{r}
+# get ranks
+ranked_page = page
+for (i in seq(2, 16)) {
+  ranked_page[[i]] = order(order(page[[i]], decreasing = TRUE))
+}
+
+# minimise - ie find highest rank
+page$ranks = apply(ranked_page[,2:16],1,which.min)
+page$ranks = factor(page$ranks, labels = names(page[,2:16]))
+```
+
+## max
+```{r}
+page$max = factor(apply(page[,2:16],1,which.max), labels = names(page[,2:16]))
+```
+
+## normalised
+```{r}
+norm_page = page
+for (i in seq(2, 16)) {
+  norm_page[[i]] = (norm_page[[i]] - mean(norm_page[[i]])) / sd(norm_page[[i]])
+}
+page$norm = factor(apply(norm_page[,2:16],1,which.max), labels = names(page[,2:16]))
+```
+
+## x% ranks
+```{r}
+fracs$num_cells = fracs$fraction / 100 * length(page[[1]])
+
+x_ranked_page = ranked_page
+for (ct in names(x_ranked_page)[2:16]) {
+  x_ranked_page[[ct]][x_ranked_page[[ct]] > fracs$num_cells[fracs$cell_types == ct]+1] = 100000
+}
+
+x_ranked_page[[17]] = 50000
+names(x_ranked_page)[17] = "no_label"
+
+page$x_ranks = apply(x_ranked_page[,2:17],1,which.min)
+mask = page$x_ranks == 16
+
+page$x_ranks[mask] = apply(ranked_page[mask, 2:16],1,which.min)
+page$x_ranks = factor(page$x_ranks, labels = names(ranked_page[,2:16]))
+
+```
 
 
+## plotting
+```{r}
+# align
+c = colnames(seurat)
+
+mapping = sapply(c, function(x) {
+  return(which(page$cell_ID == x))
+}, USE.NAMES = FALSE)
+page = page[mapping,]
+
+# add metadata
+seurat@meta.data["ranks"] = page$ranks
+seurat@meta.data["max"] = page$max
+seurat@meta.data["norm"] = page$norm
+seurat@meta.data["x_ranks"] = page$x_ranks
+```
+
+
+```{r}
+Idents(seurat) = "x_ranks"
+p = SpatialDimPlot(seurat)
+source("/mnt/data/scripts/rscripts/functions/accurate_plot.R")
+custom_colours = c("#F56867",    "#FEB915",    "#C798EE",    "#59BE86",    "#7495D3",
+"#D1D1D1",    "#6D1A9C",    "#15821E",    "#3A84E6",    "#997273",
+"#787878",    "#DB4C6C",    "#9E7A7A",    "#554236",    "#AF5F3C",
+"#93796C",    "#F9BD3F",    "#DAB370",    "#877F6C",    "#268785")
+accurate_plot(
+        p$data,
+        filename = "/mnt/data/R_analysis_original/page/tongue-5_bin50/tongue-5_bin50_x_ranked_labels.png",
+        legend_name = "PAGE Cell Labels - X Ranked", 
+        dpi = 400,
+        minres = 1000,
+        legend_space = 4,
+        custom_colours = custom_colours
+    )
+```
+
+# violin plots
+```{r}
+vdat = data.frame()
+for (i in seq(2, 16)) {
+  tempdf = data.frame("cell_type" = names(page)[i], "scores" = page[[i]])
+  if (i == 2) {
+    vdat = tempdf
+  } else {
+    vdat = rbind(vdat, tempdf)
+  }
+}
+rm(tempdf)
+```
+
+```{r}
+ggplot(vdat, aes(x = cell_type, y = scores, fill = cell_type)) + 
+  geom_violin() +
+  scale_fill_manual(values = custom_colours)+ 
+  theme_minimal() +
+  theme(axis.line=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks=element_blank())
+```
+
+```{r}
+markers = readRDS("/mnt/data/R_analysis_original/page/giotto_markers.Rds")
+for (i in seq(1:15)) {
+  print(paste(names(markers)[i], length(markers[[i]])))
+}
+```
 
