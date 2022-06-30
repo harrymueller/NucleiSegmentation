@@ -109,7 +109,7 @@ singularity exec ${visualSif} CIDcount \
     -i ${maskFile} \
     -s referenceIndex \
     -g $genomeSize \
-    > ${result_00mapping}/refMemory.txt && \
+    > ${result_00mapping}/refMemory.txt
 
 fqname=$(basename $read1})
 fqbase=${fqname%%.*}
@@ -149,7 +149,7 @@ singularity exec ${visualSif} mapping \
     --limitOutSJcollapsed 10000000 \
     --limitIObufferSize=280000000 \
     --outBAMsortingBinsN 50 \
-    > ${result_00mapping}/${fqbase}_barcodeMap.stat && \
+    > ${result_00mapping}/${fqbase}_barcodeMap.stat
 rm ${result_00mapping}/refMemory.txt
 
 #merge barcode reads count file
@@ -160,7 +160,7 @@ barcodeReadsCounts=${result_01merge}/${SNid}.barcodeReadsCount.txt
 singularity exec ${visualSif} merge \
     --in $barcodeReadsCount \
     --out $barcodeReadsCounts \
-    --action 2 && \
+    --action 2 
 
 #annotation and deduplication
 echo `date` " annotation and deduplication start......"
@@ -181,7 +181,7 @@ singularity exec ${visualSif} count \
     --save_dup \
     --sn ${SNid} \
     -c ${threads} \
-    -m 128 &&\
+    -m 128 
 
 # EXIT    
 exit 0

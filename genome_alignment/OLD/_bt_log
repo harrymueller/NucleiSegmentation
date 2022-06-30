@@ -1,7 +1,0 @@
-program exit
-/opt/pipeline/mapping/bcStar_v1.0.3() [0x426ee0]
-/opt/pipeline/mapping/bcStar_v1.0.3() [0x427517]
-/opt/binary/libc.so.6(+0x39ce9) [0x7f3509f34ce9]
-/opt/binary/libc.so.6(+0x39d37) [0x7f3509f34d37]
-/opt/binary/libc.so.6(__libc_start_main+0xfc) [0x7f3509f1d55c]
-/opt/pipeline/mapping/bcStar_v1.0.3() [0x410dcf]
