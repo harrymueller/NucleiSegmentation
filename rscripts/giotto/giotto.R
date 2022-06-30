@@ -1,16 +1,9 @@
 
-<<<<<<< HEAD
-OUTPUT_DIR = "/mnt/data/R_analysis/page/tongue-4_corp1"
+OUTPUT_DIR = "/mnt/data/R_analysis_original/page/tongue-4_corp1"
 INPUT_DIR = OUTPUT_DIR
 PART = "tongue-4-1.corp1"
 SAMPLE_NAME = "tongue-5_bin30"
-MARKERS = "/mnt/data/R_analysis/page/giotto_markers.Rds"
-=======
-OUTPUT_DIR = "/mnt/data/R_analysis_original/page"
-INPUT_DIR = OUTPUT_DIR
-PART = "Spl5Part1"
-SAMPLE_NAME = "tongue-5_bin50"
->>>>>>> 3a3c725c5632f2e36462823a8163b72e27ccf499
+MARKERS = "/mnt/data/R_analysis_original/page/giotto_markers.Rds"
 
 ### installing packages
 if (!requireNamespace("Giotto", quietly=T)) remotes::install_github("RubD/Giotto") 
