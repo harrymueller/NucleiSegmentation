@@ -1,7 +1,5 @@
 #!/bin/bash
-DIR=`pwd`/st_barcodemap_4
-# TODO if files exist, delete
-# TODO detect earlier stopping and kill processes
+DIR=/mnt/stomics/benchmarking/cellpose
 rm $DIR/log.out $DIR/usage.txt
 
 # run program via nohup
@@ -29,4 +27,4 @@ echo "# Finished main execution, analysing... "
 echo "#########################################"
 
 # print results
-python3 /mnt/local/TongueSTOmics/usage/extract_stats.py "$@" $DIR/usage.txt $DIR/stats.txt
+python3 /data/tongue/scripts/usage/extract_stats.py "$@" $DIR/usage.txt $DIR/stats.txt

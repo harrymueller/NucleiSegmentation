@@ -1,3 +1,5 @@
+library(ggplot2)
+
 accurate_plot <- function (data, # dataframe with y,x,value
                            legend_name = "Legend", 
                            filename = "temp.png", 
@@ -37,7 +39,7 @@ accurate_plot <- function (data, # dataframe with y,x,value
   background = element_rect(fill=ifelse(black_background, "black", "white"))
   #background = element_rect(fill="grey")
   p = ggplot(data=data, mapping=aes(x=x, y = y)) + 
-      geom_raster(aes(fill=values), hjust=0, vjust=0) +
+      geom_raster(aes(fill=values), hjust=0, vjust=0) + 
       coord_equal() +
       scale_x_continuous(expand = c(0, 0)) +
       scale_y_continuous(expand = c(0, 0)) + 
@@ -58,7 +60,7 @@ accurate_plot <- function (data, # dataframe with y,x,value
   
   p$labels$fill <- legend_name
   if (length(custom_colours) > 0)
-    p = p + scale_fill_gradientn(colours=custom_colours)
+    p = p + scale_fill_manual(values = custom_colours) #scale_fill_gradient2(low = "yellow", high="red")
   if (length(left_plot) == 0) {
     ggsave(filename, p, height=height, width=width + legend_space*2, dpi=dpi, limitsize = FALSE)
     if (crop) system(sprintf("convert %s -trim +repage %s", filename, filename))
