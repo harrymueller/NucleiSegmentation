@@ -1,30 +1,17 @@
 #!/bin/bash
-DIR=/mnt/stomics/benchmarking/cellpose
-rm $DIR/log.out $DIR/usage.txt
 
-# run program via nohup
-nohup $@ > $DIR/log.out 2>&1 &
-PID=$!
+if [ $1=cellpose ]; then
+    echo "####################"
+    echo "# Cellpose"
+    echo "####################"
 
-# start pidstat
-nohup pidstat -h -r -u -p $PID 1 --human > $DIR/usage.txt 2>&1 &
-PIDSTAT=$!
+    DIR=/mnt/stomics/benchmarking/cellpose
 
-echo "#########################################"
-echo "# PID = $PID | PIDSTAT = $PIDSTAT"
-echo "#########################################"
+    # run
+    CMD="python -m cellpose --dir $DIR \
+        --pretrained_model nuclei \
+        --diameter 0. \
+        --save_png"
 
-# tail logs of program
-tail -f -n +0 $DIR/log.out &
-wait $PID
-
-# when finished -> analyse data
-kill $PIDSTAT # kill pid stat
-wait $PIDSTAT 2>/dev/null
-
-echo "#########################################"
-echo "# Finished main execution, analysing... "
-echo "#########################################"
-
-# print results
-python3 /data/tongue/scripts/usage/extract_stats.py "$@" $DIR/usage.txt $DIR/stats.txt
+    nohup ./record $CMD > log.out &
+fi
