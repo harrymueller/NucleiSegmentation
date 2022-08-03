@@ -5,7 +5,7 @@ APPLICATION=mesmer
 NUCLEAR_FILE=$2
 MASK_FILE="${NUCLEAR_FILE/.png/_mask.tif}"
 
-docker run -it \
+docker run \
   -v $DATA_DIR:$MOUNT_DIR \
   vanvalenlab/deepcell-applications:0.3.1 \
   $APPLICATION \
