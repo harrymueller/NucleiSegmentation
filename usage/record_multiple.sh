@@ -5,7 +5,7 @@ rm $DIR/log.out $DIR/usage.txt
 # run program via nohup
 for f in $DIR/*.png; do
     filename=`basename "$f"`
-    nohup sh usage/run_deepcell.sh $DIR $filename >> $DIR/log.out 2>&1 &
+    nohup bash usage/run_deepcell.sh $DIR $filename >> $DIR/log.out 2>&1 &
     PID=$!
 
     # start pidstat
