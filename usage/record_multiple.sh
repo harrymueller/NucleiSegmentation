@@ -2,11 +2,6 @@
 DIR=/mnt/stomics/benchmarking/deepcell
 rm $DIR/log.out $DIR/usage.txt
 
-if [ -z $1 ]; then
-    exit 0
-fi
-
-
 # run program via nohup
 for f in $DIR/*.png; do
     filename=`basename "$f"`
