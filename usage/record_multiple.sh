@@ -6,12 +6,11 @@ if [ -z $1 ]; then
     exit 0
 fi
 
-CURRENT_DIR=`pwd`
 
 # run program via nohup
-cd $DIR
-for f in *.png; do
-    nohup ./CURRENT_DIR/usage/run_deepcell.sh $DIR $f >> $DIR/log.out 2>&1 &
+for f in $DIR/*.png; do
+    filename=`basename "$f"`
+    nohup ./usage/run_deepcell.sh $DIR $filename >> $DIR/log.out 2>&1 &
     PID=$!
 
     # start pidstat
@@ -34,7 +33,5 @@ echo "#########################################"
 echo "# Finished main execution, analysing... "
 echo "#########################################"
 
-
-cd CURRENT_DIR
 # print results
 # python3 /data/tongue/scripts/usage/extract_stats.py "$@" $DIR/usage.txt $DIR/stats.txt
