@@ -3,29 +3,36 @@ import matplotlib.image as mpimg
 import os
 
 # consts
-INPUT_FILE = "/mnt/perkinsdata/tongue_STOmics/discovery/cellpose/images/tongue-4_auto_seg.npy"
-OUTPUT_DIR = "/mnt/perkinsdata/tongue_STOmics/discovery/cellpose/tongue-4"
+INPUT_DIR = "/mnt/perkinsdata/tongue_STOmics/benchmarking/cellpose/pickles"
+OUTPUT_DIR = "/mnt/perkinsdata/tongue_STOmics/benchmarking/cellpose/results"
 
-PATH = os.path.join(OUTPUT_DIR, "02_cellpose")
+outputs = [os.path.join(OUTPUT_DIR, "outlines"), 
+           os.path.join(OUTPUT_DIR, "segments")]
 
-# make folders
-if not os.path.isdir(PATH): os.mkdir(PATH)
+# make output folder if not made
+if not os.path.isdir(OUTPUT_DIR): os.mkdir(OUTPUT_DIR)
+if not os.path.isdir(outputs[0]): os.mkdir(outputs[0])
+if not os.path.isdir(outputs[1]): os.mkdir(outputs[1])
 
-# load NPY array
-print("Loading NPY object")
-x = np.load(INPUT_FILE, allow_pickle = True).item()
+for f in os.listdir(INPUT_DIR):
+    i = f.split("_")[1] # get image number
+    print(">>> " + i)
+    
+    # load NPY array
+    print("Loading NPY object")
+    x = np.load(os.path.join(INPUT_DIR, f), allow_pickle = True).item()
 
-# show segment outlines on ssDNA image
-# derived from cellpose.plot.outline_view 
-print("Segmentation outlines")
-im = x["img"]
-if len(im.shape)<3: im = np.stack([im]*3,axis=-1)
+    # show segment outlines on ssDNA image
+    # derived from cellpose.plot.outline_view 
+    print("Segmentation outlines")
+    im = x["img"]
+    if len(im.shape)<3: im = np.stack([im]*3,axis=-1)
 
-outY, outX = np.nonzero(x["outlines"])
-im[outY, outX] = np.array([255,0,0])
-mpimg.imsave(os.path.join(PATH, "cellpose_segmented.png"), im)
+    outY, outX = np.nonzero(x["outlines"])
+    im[outY, outX] = np.array([255,0,0])
+    mpimg.imsave(os.path.join(outputs[0], "cellpose_segmented_%s.png" % (i)), im)
 
-# save to masks
-print("Saving masks")
-masks = x["masks"] + 1
-np.savetxt(os.path.join(PATH, "segments.csv"), masks, delimiter=",", fmt = "%d")
+    # save to masks
+    print("Saving masks")
+    masks = x["masks"] + 1
+    np.savetxt(os.path.join(outputs[1], "segments_%s.csv" % (i)), masks, delimiter=",", fmt = "%d")
