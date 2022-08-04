@@ -6,6 +6,13 @@ NUCLEAR_SEG_EXE=/data/tongue/ssDNA_nuclei_segmentation/NucleiSegregation
 rm $DIR/log.out $DIR/usage.txt
 
 # run program via nohup
+if [ $SCRIPT = watershed ]; then
+    # start pidstat
+
+    nohup pidstat -h -r -u -p $PID 1 --human >> $DIR/usage.txt 2>&1 &
+    PIDSTAT=$!
+fi
+
 for f in $DIR/*.png; do
     filename=`basename "$f"`
     if [ $SCRIPT = deepcell ]; then
@@ -20,10 +27,6 @@ for f in $DIR/*.png; do
         PID=$!
 
 	    mv $DIR/02_watershed "${f/.png}"
-
-        # start pidstat
-        nohup pidstat -h -r -u -p $PID 1 --human >> $DIR/usage.txt 2>&1 &
-        PIDSTAT=$!
     fi
 
     echo "#########################################"
@@ -35,10 +38,15 @@ for f in $DIR/*.png; do
     wait $PID
 
     # when finished -> analyse data
+    if [ $SCRIPT != watershed]; then
+        kill $PIDSTAT # kill pid stat
+        wait $PIDSTAT 2>/dev/null
+    fi
+done 
+if [ $SCRIPT = watershed]; then
     kill $PIDSTAT # kill pid stat
     wait $PIDSTAT 2>/dev/null
-done 
-
+fi
 echo "#########################################"
 echo "# Finished main execution, analysing... "
 echo "#########################################"
