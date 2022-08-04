@@ -1,11 +1,20 @@
 #!/bin/bash
-DIR=/mnt/stomics/benchmarking/deepcell
+SCRIPT=watershed
+DIR=/mnt/stomics/benchmarking/${SCRIPT}
+NUCLEAR_SEG_EXE=/data/tongue/ssDNA_nuclei_segmentation/NucleiSegregation
+
 rm $DIR/log.out $DIR/usage.txt
 
 # run program via nohup
 for f in $DIR/*.png; do
     filename=`basename "$f"`
-    nohup bash usage/run_deepcell.sh $DIR $filename >> $DIR/log.out 2>&1 &
+    if [ $SCRIPT = deepcell ]; then
+        nohup bash usage/run_deepcell.sh $DIR $filename >> $DIR/log.out 2>&1 &
+    elif [ $SCRIPT = watershed ]; then
+        newdir=$DIR/"${filename/.png/}"
+        mkdir newdir
+        nohup bash $NUCLEAR_SEG_EXE -i $DIR/$filename -o newdir >> $DIR/log.out 2>&1 &
+    fi
     PID=$!
 
     # start pidstat
@@ -24,6 +33,7 @@ for f in $DIR/*.png; do
     kill $PIDSTAT # kill pid stat
     wait $PIDSTAT 2>/dev/null
 done 
+
 echo "#########################################"
 echo "# Finished main execution, analysing... "
 echo "#########################################"
