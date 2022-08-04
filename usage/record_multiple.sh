@@ -11,9 +11,10 @@ for f in $DIR/*.png; do
     if [ $SCRIPT = deepcell ]; then
         nohup bash usage/run_deepcell.sh $DIR $filename >> $DIR/log.out 2>&1 &
     elif [ $SCRIPT = watershed ]; then
-        newdir=$DIR/"${filename/.png/}"
-        mkdir newdir
-        nohup bash $NUCLEAR_SEG_EXE -i $DIR/$filename -o newdir >> $DIR/log.out 2>&1 &
+        #newdir=$DIR/"${filename/.png/}"
+        #mkdir $newdir
+        nohup $NUCLEAR_SEG_EXE watershed -i $f -o $DIR >> $DIR/log.out 2>&1 &
+	mv $DIR/02_watershed "${f/.png}"
     fi
     PID=$!
 
@@ -26,7 +27,6 @@ for f in $DIR/*.png; do
     echo "#########################################"
 
     # tail logs of program
-    tail -f -n +0 $DIR/log.out &
     wait $PID
 
     # when finished -> analyse data
