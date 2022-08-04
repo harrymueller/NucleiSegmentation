@@ -10,16 +10,21 @@ for f in $DIR/*.png; do
     filename=`basename "$f"`
     if [ $SCRIPT = deepcell ]; then
         nohup bash usage/run_deepcell.sh $DIR $filename >> $DIR/log.out 2>&1 &
-    elif [ $SCRIPT = watershed ]; then
-        newdir=$DIR/"${filename/.png/}"
-        mkdir $newdir
-        nohup bash $NUCLEAR_SEG_EXE watershed -i $f -o $newdir >> $DIR/log.out 2>&1 &
-    fi
-    PID=$!
+        PID=$!
 
-    # start pidstat
-    nohup pidstat -h -r -u -p $PID 1 --human >> $DIR/usage.txt 2>&1 &
-    PIDSTAT=$!
+        # start pidstat
+        nohup pidstat -h -r -u -G python 1 --human >> $DIR/usage.txt 2>&1 &
+        PIDSTAT=$!
+    elif [ $SCRIPT = watershed ]; then
+        nohup $NUCLEAR_SEG_EXE watershed -i $f -o $DIR >> $DIR/log.out 2>&1 &
+        PID=$!
+
+	    mv $DIR/02_watershed "${f/.png}"
+
+        # start pidstat
+        nohup pidstat -h -r -u -p $PID 1 --human >> $DIR/usage.txt 2>&1 &
+        PIDSTAT=$!
+    fi
 
     echo "#########################################"
     echo "# PID = $PID | PIDSTAT = $PIDSTAT"

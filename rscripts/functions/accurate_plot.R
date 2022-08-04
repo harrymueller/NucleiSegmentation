@@ -59,7 +59,6 @@ accurate_plot <- function (data, # dataframe with y,x,value
             legend.background = element_rect(fill="white"))
   
   p$labels$fill <- legend_name
-  
   if (length(custom_colours) > 0)
     p = p + scale_fill_manual(values = custom_colours) #scale_fill_gradient2(low = "yellow", high="red")
   if (length(left_plot) == 0) {
