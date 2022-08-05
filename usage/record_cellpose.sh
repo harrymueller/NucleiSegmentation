@@ -6,8 +6,13 @@ if [ -z $1 ]; then
     exit 0
 fi
 
+CMD="python -m cellpose --dir $DIR \
+        --pretrained_model nuclei \
+        --diameter 0. \
+        --save_png"
+
 # run program via nohup
-nohup $@ > $DIR/log.out 2>&1 &
+nohup $CMD > $DIR/log.out 2>&1 &
 PID=$!
 
 # start pidstat
