@@ -22,11 +22,14 @@ for f in $DIR/*.png; do
         # start pidstat
         nohup pidstat -h -r -u -G python 1 --human >> $DIR/usage.txt 2>&1 &
         PIDSTAT=$!
+
+	wait $PID
     elif [ $SCRIPT = watershed ]; then
         nohup $NUCLEAR_SEG_EXE watershed -i $f -o $DIR >> $DIR/log.out 2>&1 &
         PID=$!
 
-	    mv $DIR/02_watershed "${f/.png}"
+	wait $PID
+	mv $DIR/02_watershed "${f/.png}"
     fi
 
     echo "#########################################"
@@ -34,16 +37,14 @@ for f in $DIR/*.png; do
     echo "#########################################"
 
     # tail logs of program
-    #tail -f -n +0 $DIR/log.out &
-    wait $PID
 
     # when finished -> analyse data
-    if [ $SCRIPT != watershed]; then
+    if [ $SCRIPT != watershed ]; then
         kill $PIDSTAT # kill pid stat
         wait $PIDSTAT 2>/dev/null
     fi
 done 
-if [ $SCRIPT = watershed]; then
+if [ $SCRIPT = watershed ]; then
     kill $PIDSTAT # kill pid stat
     wait $PIDSTAT 2>/dev/null
 fi
