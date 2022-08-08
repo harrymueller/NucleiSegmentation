@@ -1,10 +1,7 @@
 #!/bin/bash
-DIR=/mnt/stomics/benchmarking/cellpose
+DIR=/mnt/stomics/benchmarking/25_2k_2/cellpose
+#DIR=/mnt/stomics/benchmarking/cellpose
 rm $DIR/log.out $DIR/usage.txt
-
-if [ -z $1 ]; then
-    exit 0
-fi
 
 CMD="python -m cellpose --dir $DIR \
         --pretrained_model nuclei \
@@ -24,7 +21,6 @@ echo "# PID = $PID | PIDSTAT = $PIDSTAT"
 echo "#########################################"
 
 # tail logs of program
-tail -f -n +0 $DIR/log.out &
 wait $PID
 
 # when finished -> analyse data
