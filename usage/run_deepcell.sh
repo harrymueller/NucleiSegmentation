@@ -10,6 +10,6 @@ docker run \
   vanvalenlab/deepcell-applications:0.3.1 \
   $APPLICATION \
   --nuclear-image $MOUNT_DIR/$NUCLEAR_FILE \
-  --output-directory $MOUNT_DIR/02_deepcell \
+  --output-directory $MOUNT_DIR \
   --output-name $MASK_FILE \
   --compartment nuclear
