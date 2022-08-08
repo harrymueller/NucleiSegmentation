@@ -1,6 +1,6 @@
 #!/bin/bash
 SCRIPT=watershed
-DIR=/mnt/stomics/benchmarking/${SCRIPT}
+DIR=/mnt/stomics/benchmarking/5x5/${SCRIPT}
 NUCLEAR_SEG_EXE=/data/tongue/ssDNA_nuclei_segmentation/NucleiSegregation
 
 rm $DIR/log.out $DIR/usage.txt
@@ -9,7 +9,7 @@ rm $DIR/log.out $DIR/usage.txt
 if [ $SCRIPT = watershed ]; then
     # start pidstat
 
-    nohup pidstat -h -r -u -p $PID 1 --human >> $DIR/usage.txt 2>&1 &
+    nohup pidstat -h -r -u -G watershed 1 --human >> $DIR/usage.txt 2>&1 &
     PIDSTAT=$!
 fi
 
