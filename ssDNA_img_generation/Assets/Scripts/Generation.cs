@@ -42,12 +42,10 @@ public class Generation : MonoBehaviour
     {
         // delete nuclei if any exist already
         if (parent.transform.childCount > 0) empty();
-
         int i = 0;
         int failed = 0; // safety net
 
         while (i < numSpheres && failed < numSpheres) {
-            
             if (createObj()) i++;
             else failed++;
         }
@@ -57,7 +55,11 @@ public class Generation : MonoBehaviour
     *   Deletes nuclei in the scene
     */
     public void empty() {
-        foreach (Transform child in parent.transform) GameObject.Destroy(child.gameObject);
+        /*Debug.Log(parent.transform.childCount);
+        foreach (Transform child in parent.transform) {Debug.Log(child.gameObject); Destroy(child.gameObject);}
+        Debug.Log(parent.transform.childCount);*/
+        GameObject.Destroy(parent);
+        parent = new GameObject("Nuclei");
     }
 
     /*
@@ -136,7 +138,7 @@ public class Generation : MonoBehaviour
     public void randomiseColours() {
         Color c;
         foreach (Transform child in parent.transform) {
-            c = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f), 1f);
+            c = new Color(Random.Range(0.5f, 1f), Random.Range(0.5f, 1f), Random.Range(0.5f, 1f), 1f);
             child.gameObject.GetComponent<MeshRenderer>().material.SetColor("_Color", c);
         }
     }
