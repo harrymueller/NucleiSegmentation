@@ -1,14 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-/*
-    - density
-    - organise files
-    - noise
-    - collisions <- fix
-    - colour level
-*/
+using System.IO;
 
 public class Misc
 {
@@ -62,5 +55,17 @@ public class Misc
         }
         
         cam.orthographicSize = sizes.z / 2f;
+    }
+
+    public static void setupOutputs(string dir, string[] foldernames) {
+        checkEmpty(dir + "/" + foldernames[0]);
+        checkEmpty(dir + "/" + foldernames[1]);
+    }
+
+    private static void checkEmpty(string dir) {
+        // if dir exists, delete
+        if(Directory.Exists(dir)) Directory.Delete(dir, true); 
+        
+        Directory.CreateDirectory(dir);
     }
 }

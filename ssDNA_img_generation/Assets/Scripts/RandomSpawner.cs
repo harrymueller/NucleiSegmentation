@@ -12,7 +12,7 @@ using System;
 */
 
 public class RandomSpawner : MonoBehaviour
-{
+{ 
     public Camera cam;
 
     public Material black;
@@ -29,7 +29,8 @@ public class RandomSpawner : MonoBehaviour
     private int numTaken; // counter for number of images generated
 
     public string filepath;
-    public string fileformat = "{0}/{1}_{2}.png"; // dir/nuclei_0
+    public string fileformat = "{0}/{1}/{2}_{3}.png"; // dir/folderrname/nuclei_0
+    public string[] foldernames = {"ssDNA_stains_raw", "ground_truths"};
 
     private Generation generator;
 
@@ -52,6 +53,8 @@ public class RandomSpawner : MonoBehaviour
         
         Camera.onPreRender += preRenderFunc;
         Camera.onPostRender += postRenderFunc;
+
+        Misc.setupOutputs(filepath, foldernames);
     }
 
     /*
@@ -59,14 +62,14 @@ public class RandomSpawner : MonoBehaviour
     */
     void preRenderFunc(Camera c) {
         // checks if enough photos has been taken
-        if (numTaken >= numPhotos*2) OnDestroy();
-        else if (numTaken == 0) return;// start occurs after prerender
+        if (numTaken >= numPhotos*4) OnDestroy();
         
         // otherwise generator new positions
-        else if (numTaken % 2 == 0) { 
+        else if (numTaken % 4 == 0) { 
             generator.empty();
             generator.populate();
-        } else {
+        } 
+        else if (numTaken % 2 == 0) {
             generator.randomiseColours();
         }
     }
@@ -75,18 +78,22 @@ public class RandomSpawner : MonoBehaviour
     * Take a screenshot at the appropiate dimensions after rendering
     */
     void postRenderFunc(Camera c) {
-        int width = RenderTexture.active.width;
-        int height = RenderTexture.active.height;
+        if (numTaken % 2 == 1) {
+            int width = RenderTexture.active.width;
+            int height = RenderTexture.active.height;
 
-        var t = new Texture2D(width, height, TextureFormat.RGB24, true);
-        t.ReadPixels(new Rect(0, 0, width, height), 0, 0);
-        t.Apply();
-        var bytes = t.EncodeToPNG();
+            var t =  new Texture2D(width, height, TextureFormat.RGB24, true);
 
-        Destroy(t);
-        string type = (numTaken % 2 == 0) ? "nuclei" : "truth";
-        File.WriteAllBytes(string.Format(fileformat, filepath, type, (numTaken++)/2), bytes);
-    }
+            t.ReadPixels(new Rect(0, 0, width, height), 0, 0);
+            t.Apply();
+            var bytes = t.EncodeToPNG();
+
+            Destroy(t);
+            string type = (numTaken % 4 == 1) ? "nuclei" : "truth";
+            File.WriteAllBytes(string.Format(fileformat, filepath, foldernames[numTaken%4/2], type, numTaken/4), bytes);
+        }
+        numTaken++;
+    }   
 
     /*
     *   Removes camera callback functions
