@@ -1,17 +1,21 @@
 #!/bin/bash
-SCRIPT=watershed
-DIR=/mnt/stomics/benchmarking/${SCRIPT}
+SCRIPT=$1
+if [ -z $1 ]; then
+	echo need script name
+fi
+
+DIR=/mnt/stomics/benchmarking/7x1/${SCRIPT}
 NUCLEAR_SEG_EXE=/data/tongue/ssDNA_nuclei_segmentation/NucleiSegregation
 
 rm $DIR/log.out $DIR/usage.txt
 
 # run program via nohup
-if [ $SCRIPT = watershed ]; then
+#if [ $SCRIPT = watershed ]; then
     # start pidstat
 
-    nohup pidstat -h -r -u -p $PID 1 --human >> $DIR/usage.txt 2>&1 &
-    PIDSTAT=$!
-fi
+ #   nohup pidstat -h -r -u -G NucleiSegregation 1 --human >> $DIR/usage.txt 2>&1 &
+  #  PIDSTAT=$!
+#fi
 
 for f in $DIR/*.png; do
     filename=`basename "$f"`
@@ -27,6 +31,9 @@ for f in $DIR/*.png; do
     elif [ $SCRIPT = watershed ]; then
         nohup $NUCLEAR_SEG_EXE watershed -i $f -o $DIR >> $DIR/log.out 2>&1 &
         PID=$!
+	
+	nohup pidstat -h -r -u -p $PID 1 --human >> $DIR/usage.txt 2>&1 &
+	PIDSTAT=$!
 
 	wait $PID
 	mv $DIR/02_watershed "${f/.png}"
@@ -39,18 +46,18 @@ for f in $DIR/*.png; do
     # tail logs of program
 
     # when finished -> analyse data
-    if [ $SCRIPT != watershed ]; then
+    #if [ $SCRIPT != watershed ]; then
         kill $PIDSTAT # kill pid stat
         wait $PIDSTAT 2>/dev/null
-    fi
+    #fi
 done 
-if [ $SCRIPT = watershed ]; then
-    kill $PIDSTAT # kill pid stat
-    wait $PIDSTAT 2>/dev/null
-fi
+#if [ $SCRIPT = watershed ]; then
+#    kill $PIDSTAT # kill pid stat
+#    wait $PIDSTAT 2>/dev/null
+#fi
 echo "#########################################"
 echo "# Finished main execution, analysing... "
 echo "#########################################"
 
 # print results
-# python3 /data/tongue/scripts/usage/extract_stats.py "$@" $DIR/usage.txt $DIR/stats.txt
+python3 /data/tongue/scripts/usage/extract_stats.py "$@" $DIR/usage.txt $DIR/stats.txt
