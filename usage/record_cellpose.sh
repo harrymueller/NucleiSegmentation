@@ -1,5 +1,5 @@
 #!/bin/bash
-DIR=/mnt/stomics/benchmarking/25_2k_2/cellpose
+DIR=/mnt/stomics/benchmarking/5x5/cellpose
 #DIR=/mnt/stomics/benchmarking/cellpose
 rm $DIR/log.out $DIR/usage.txt
 
