@@ -1,6 +1,5 @@
 #!/bin/bash
-DIR=/mnt/stomics/benchmarking/5x5/cellpose
-#DIR=/mnt/stomics/benchmarking/cellpose
+DIR=/mnt/stomics/benchmarking/7x1/cellpose
 rm $DIR/log.out $DIR/usage.txt
 
 CMD="python -m cellpose --dir $DIR \

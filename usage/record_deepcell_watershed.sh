@@ -1,6 +1,10 @@
 #!/bin/bash
-SCRIPT=deepcell
-DIR=/mnt/stomics/benchmarking/5x5/${SCRIPT}
+SCRIPT=$1
+if [ -z $1 ]; then
+	echo need script name
+fi
+
+DIR=/mnt/stomics/benchmarking/7x1/${SCRIPT}
 NUCLEAR_SEG_EXE=/data/tongue/ssDNA_nuclei_segmentation/NucleiSegregation
 
 rm $DIR/log.out $DIR/usage.txt
@@ -56,4 +60,4 @@ echo "# Finished main execution, analysing... "
 echo "#########################################"
 
 # print results
-# python3 /data/tongue/scripts/usage/extract_stats.py "$@" $DIR/usage.txt $DIR/stats.txt
+python3 /data/tongue/scripts/usage/extract_stats.py "$@" $DIR/usage.txt $DIR/stats.txt
