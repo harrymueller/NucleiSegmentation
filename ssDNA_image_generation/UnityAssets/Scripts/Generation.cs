@@ -13,6 +13,9 @@ public class Generation : MonoBehaviour
     private GameObject parent;
     private DensityDistribution dist;
 
+    //private Color[] all_colours;
+    private uint colour_i = 0;
+
     /*
     *   Setups positions, creates parent game object, and saves the required parameters to local variables
     */
@@ -55,11 +58,9 @@ public class Generation : MonoBehaviour
     *   Deletes nuclei in the scene
     */
     public void empty() {
-        /*Debug.Log(parent.transform.childCount);
-        foreach (Transform child in parent.transform) {Debug.Log(child.gameObject); Destroy(child.gameObject);}
-        Debug.Log(parent.transform.childCount);*/
         GameObject.Destroy(parent);
         parent = new GameObject("Nuclei");
+        colour_i = 0;
     }
 
     /*
@@ -68,12 +69,13 @@ public class Generation : MonoBehaviour
     */
     private bool CheckOverlap(GameObject obj, PrimitiveType type)
     {
+        obj.SetActive(false);
         if (type == PrimitiveType.Sphere) { // sphere
             obj.GetComponent<SphereCollider>().isTrigger = true;
             return Physics.CheckSphere(obj.transform.position, obj.GetComponent<SphereCollider>().radius); 
         } else { // capsule
             // get start and end coords
-            obj.GetComponent<CapsuleCollider>().isTrigger = true;
+            obj.GetComponent<CapsuleCollider>().isTrigger = false;
             Vector3 start; Vector3 end; float rad; 
             PhysicsExtensions.ToWorldSpaceCapsule(obj.GetComponent<CapsuleCollider>(), out start, out end, out rad);
             return Physics.CheckCapsule(start, end, rad);
@@ -110,14 +112,14 @@ public class Generation : MonoBehaviour
         PrimitiveType objType = getRandomObj();
         GameObject obj = GameObject.CreatePrimitive(objType);
 
+        // parent and material
+        obj.transform.parent = parent.transform;
+        obj.GetComponent<MeshRenderer>().material = mat;
+
         // add position, scale, rotation
         obj.transform.position = new Vector3(dist.convert(Random.Range(minPos.x, maxPos.x)), Random.Range(minPos.y, maxPos.y), Random.Range(minPos.z, maxPos.z));
         obj.transform.localScale = randomGenVector(scale[0], scale[1]);
         obj.transform.rotation = Quaternion.Euler(randomGenVector(0f, 360f));
-
-        // parent and material
-        obj.transform.parent = parent.transform;
-        obj.GetComponent<MeshRenderer>().material = mat;
 
         // shading
         float colour = (sizes.y + obj.transform.position.y) / sizes.y;
@@ -128,6 +130,7 @@ public class Generation : MonoBehaviour
             GameObject.Destroy(obj);
             return false;
         } else {
+            obj.SetActive(true);
             return true;
         }
     }
@@ -138,8 +141,14 @@ public class Generation : MonoBehaviour
     public void randomiseColours() {
         Color c;
         foreach (Transform child in parent.transform) {
-            c = new Color(Random.Range(0.5f, 1f), Random.Range(0.5f, 1f), Random.Range(0.5f, 1f), 1f);
+            // based on the color index, uses sets of 7bits to create a colour from (0.5, 1.0]
+            float r = ((float) (colour_i>>14)      + 128) / 255; 
+            float g = ((float) (colour_i>>7) % 128 + 128) / 255; 
+            float b = ((float) (colour_i)    % 128 + 128) / 255; 
+
+            c = new Color(r,g,b);
             child.gameObject.GetComponent<MeshRenderer>().material.SetColor("_Color", c);
+            colour_i += 2;
         }
     }
 }

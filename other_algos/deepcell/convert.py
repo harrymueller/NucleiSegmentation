@@ -3,9 +3,9 @@ import cv2 as cv
 import os
 
 # consts
-ORIG_DIR = "/mnt/perkinsdata/tongue_STOmics/benchmarking/25_2k_2/deepcell/orig"
-MASK_DIR = "/mnt/perkinsdata/tongue_STOmics/benchmarking/25_2k_2/deepcell/masks"
-OUTPUT_DIR = "/mnt/perkinsdata/tongue_STOmics/benchmarking/25_2k_2/deepcell/results"
+ORIG_DIR = "/mnt/perkinsdata/tongue_STOmics/benchmarking/25_2k_3/deepcell/orig"
+MASK_DIR = "/mnt/perkinsdata/tongue_STOmics/benchmarking/25_2k_3/deepcell/masks"
+OUTPUT_DIR = "/mnt/perkinsdata/tongue_STOmics/benchmarking/25_2k_3/deepcell/results"
 
 RED = np.array([0,0,255])
 
@@ -29,7 +29,6 @@ for orig in os.listdir(ORIG_DIR):
 
     # apply outlines to im
     print("Creating outlines and fixing mask")
-    mask = np.ones_like(x)
     unique_vals = np.unique(x)
 
     for i in range(x.shape[1]): # x
@@ -54,10 +53,11 @@ for orig in os.listdir(ORIG_DIR):
     print("Converting masks")
     # VERY INEFFICIENT BUT IT DOES WORK (probably)
 
+    x.dtype = np.uint32
     for i in range(1, len(unique_vals)):
         x[x == unique_vals[i]] = i
 
-    x.dtype = np.uint16
+    x = x + 1 # make background 1
 
     print("Saving masks")
-    np.savetxt(os.path.join(OUTPUT_DIR, "segments", sample + ".csv"), mask, delimiter=",", fmt = "%d")
+    np.savetxt(os.path.join(OUTPUT_DIR, "segments", sample.replace("nuclei", "segments") + ".csv"), x, delimiter=",", fmt = "%d")

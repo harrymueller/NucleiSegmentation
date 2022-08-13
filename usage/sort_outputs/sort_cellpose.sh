@@ -1,5 +1,5 @@
 #!/bin/bash
-DIR=/mnt/perkinsdata/tongue_STOmics/benchmarking/25_2k_2/cellpose
+DIR=/mnt/perkinsdata/tongue_STOmics/benchmarking/25_2k_3/cellpose
 
 mkdir $DIR/orig $DIR/pickles $DIR/masks
 
