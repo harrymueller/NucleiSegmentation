@@ -254,18 +254,18 @@ MonoBehaviour:
   cam: {fileID: 963194227}
   black: {fileID: 2100000, guid: 0f34b703eff80fc7fbf385edd73eb827, type: 2}
   white: {fileID: 2100000, guid: 558aa61c1b6ce8d00b091838c097b39a, type: 2}
-  sizes: {x: 192, y: 1.5, z: 108}
+  sizes: {x: 192, y: 3, z: 108}
   borderSize: 1
-  numSpheres: 3500
+  numSpheres: 3600
   scale:
   - 0.7
   - 1
   useStepWiseEquations: 1
   proportions:
-  - 0.28
+  - 0.25
   - 0.5
   numPhotos: 25
-  filepath: /mnt/perkinsdata/tongue_STOmics/ssDNA_image_generation/images/25_2k_2
+  filepath: /mnt/perkinsdata/tongue_STOmics/ssDNA_image_generation/images/25_2k_4
   fileformat: '{0}/{1}/{2}_{3}.png'
   foldernames:
   - ssDNA_stains_raw
