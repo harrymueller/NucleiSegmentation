@@ -3,12 +3,8 @@ import numpy as np
 import pandas as pd
 import os.path, sys
 
-# TODO
-# watershed nan last col
-
 # CONSTs
 MIN_NUM = 25 # minimum area of a true ID
-MAX_DIAM = 64 # maximum width || height of a segment
 
 # DIR
 DIR = "/mnt/perkinsdata/tongue_STOmics/benchmarking/25_2k_3"
@@ -29,7 +25,8 @@ files = os.listdir(INPUT_DIR)
 
 all_dice = np.zeros(len(files), dtype = np.float32)
 all_ious = np.zeros(len(files), dtype = np.float32)
-all_f1   = np.zeros(len(files), dtype = np.float32)
+all_precision = np.zeros(len(files), dtype = np.float32)
+all_recall    = np.zeros(len(files), dtype = np.float32)
 
 for (u, f) in enumerate(files):
     print(" > " + f)
@@ -102,7 +99,7 @@ for (u, f) in enumerate(files):
 
     precision = TP / (TP + FP)
     recall    = TP / (TP + FN)
-    f1        = 2 * precision * recall / (precision + recall)
+    # f1      = 2 * precision * recall / (precision + recall) same as dice
 
     # save A,B,AnB,AuB to file
     df = pd.DataFrame(np.transpose(np.array([A,B,AnB,AuB])), columns = ['A','B','AnB','AuB'])
@@ -110,10 +107,13 @@ for (u, f) in enumerate(files):
 
     all_dice[u] = np.nanmean(dice)
     all_ious[u] = np.nanmean(ious)
-    all_f1[u]   = np.nanmean(f1)
 
-df = pd.DataFrame(np.transpose(np.array([all_dice, all_ious, all_f1])), columns = ['Dice','IoUs','F1'])
+    all_precision[u] = np.nanmean(precision)
+    all_recall[u] = np.nanmean(recall)
+    #all_f1[u]   = np.nanmean(f1)
+
+df = pd.DataFrame(np.transpose(np.array([all_dice, all_ious, all_precision, all_recall])), columns = ['Dice','IoUs','Precision','Recall'])
 df.to_csv(os.path.join(OUTPUT_DIR, "measures.csv"))
 
 with open(os.path.join(OUTPUT_DIR, "statistics.csv"), "w") as f:
-    f.write("Dice = {:.4f}\nIoU  = {:.4f}\nF1   = {:.4f}\n".format(np.nanmean(all_dice), np.nanmean(all_ious), np.nanmean(all_f1)))
+    f.write("Dice / F1 = {:.4f}\nIoU       = {:.4f}\nPrecision = {:.4f}\nRecall    = {:.4f}\n".format(np.nanmean(all_dice), np.nanmean(all_ious), np.nanmean(all_precision), np.nanmean(all_recall)))

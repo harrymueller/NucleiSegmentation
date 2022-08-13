@@ -3,9 +3,9 @@ import cv2 as cv
 import os
 
 # consts
-ORIG_DIR = "/mnt/perkinsdata/tongue_STOmics/benchmarking/25_2k_3/deepcell/orig"
-MASK_DIR = "/mnt/perkinsdata/tongue_STOmics/benchmarking/25_2k_3/deepcell/masks"
-OUTPUT_DIR = "/mnt/perkinsdata/tongue_STOmics/benchmarking/25_2k_3/deepcell/results"
+ORIG_DIR = "/mnt/perkinsdata/tongue_STOmics/benchmarking/25_2k_4/deepcell/orig"
+MASK_DIR = "/mnt/perkinsdata/tongue_STOmics/benchmarking/25_2k_4/deepcell/masks"
+OUTPUT_DIR = "/mnt/perkinsdata/tongue_STOmics/benchmarking/25_2k_4/deepcell/results"
 
 RED = np.array([0,0,255])
 

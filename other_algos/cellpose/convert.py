@@ -3,8 +3,8 @@ import matplotlib.image as mpimg
 import os
 
 # consts
-INPUT_DIR = "/mnt/perkinsdata/tongue_STOmics/benchmarking/25_2k_3/cellpose/pickles"
-OUTPUT_DIR = "/mnt/perkinsdata/tongue_STOmics/benchmarking/25_2k_3/cellpose/results"
+INPUT_DIR = "/mnt/perkinsdata/tongue_STOmics/benchmarking/25_2k_4/cellpose/pickles"
+OUTPUT_DIR = "/mnt/perkinsdata/tongue_STOmics/benchmarking/25_2k_4/cellpose/results"
 
 outputs = [os.path.join(OUTPUT_DIR, "outlines"), 
            os.path.join(OUTPUT_DIR, "segments")]

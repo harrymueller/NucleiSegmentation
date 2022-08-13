@@ -1,5 +1,5 @@
 #!/bin/bash
-DIR=/mnt/perkinsdata/tongue_STOmics/benchmarking/25_2k_3/watershed
+DIR=/mnt/perkinsdata/tongue_STOmics/benchmarking/25_2k_4/watershed
 
 # orig
 mkdir $DIR/orig
