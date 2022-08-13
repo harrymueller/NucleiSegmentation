@@ -49,4 +49,3 @@ else:
     # Wait indefinitely until you push a key.  Once you do, close the windows
     cv2.waitKey(0)
     cv2.destroyAllWindows()
-

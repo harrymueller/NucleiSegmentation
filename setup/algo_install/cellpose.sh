@@ -10,4 +10,3 @@ python -m pip install 'cellpose[all]'
 # for GPUs
 # pip uninstall torch
 # conda install pytorch cudatoolkit=10.2 -c pytorch
-
