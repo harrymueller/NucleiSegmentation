@@ -4,7 +4,7 @@ if [ -z $1 ]; then
 	echo need script name
 fi
 
-DIR=/mnt/stomics/benchmarking/7x1/${SCRIPT}
+DIR=/mnt/stomics/benchmarking/25_2k_4/${SCRIPT}
 NUCLEAR_SEG_EXE=/data/tongue/ssDNA_nuclei_segmentation/NucleiSegregation
 
 rm $DIR/log.out $DIR/usage.txt
