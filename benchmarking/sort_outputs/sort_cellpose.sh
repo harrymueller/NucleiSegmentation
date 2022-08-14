@@ -7,4 +7,4 @@ mv $DIR/*npy $DIR/pickles
 mv $DIR/*masks* $DIR/masks
 mv $DIR/*png $DIR/orig
 
-python3 other_algos/cellpose/convert.py
+python3 algos/cellpose/convert.py

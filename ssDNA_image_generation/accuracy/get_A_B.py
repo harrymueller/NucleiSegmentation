@@ -1,3 +1,7 @@
+"""
+    Get areas of intersections for for the major segment of all true ids
+"""
+
 import cv2
 import numpy as np
 import pandas as pd
@@ -7,11 +11,8 @@ import os.path, sys
 MIN_NUM = 25 # minimum area of a true ID
 
 # DIR
-DIR = "/mnt/perkinsdata/tongue_STOmics/benchmarking/25_2k_3"
-NAME = sys.argv[1] #"cellpose"
-print("#"*30)
-print("# " + NAME)
-print("#"*30)
+DIR = sys.argv[1]
+NAME = sys.argv[2]
 
 INPUT_DIR = os.path.join(DIR, NAME, "results/segments")
 TRUTH_DIR = os.path.join(DIR, "ground_truths_fixed")
@@ -22,11 +23,6 @@ for f in [OUTPUT_DIR, os.path.join(OUTPUT_DIR, "per_image")]:
     if not os.path.isdir(f): os.mkdir(f)
 
 files = os.listdir(INPUT_DIR)
-
-all_dice = np.zeros(len(files), dtype = np.float32)
-all_ious = np.zeros(len(files), dtype = np.float32)
-all_precision = np.zeros(len(files), dtype = np.float32)
-all_recall    = np.zeros(len(files), dtype = np.float32)
 
 for (u, f) in enumerate(files):
     print(" > " + f)
@@ -82,38 +78,15 @@ for (u, f) in enumerate(files):
         # otherwise use the only one
         else: f_id = f_ids[0]
         
-        if f_id == 1: continue
+        if f_id == 1: continue # skip if background the major colour
+        
         A[i] = np.count_nonzero(t_mask)
         B[i] = np.count_nonzero(false == f_id)
         AnB[i] = np.count_nonzero(np.bitwise_and(t_mask, false == f_id))
 
-    # other measures
+    # get the union
     AuB = A + B - AnB
-    TP  = AnB
-    FP  = B - AnB
-    FN  = A - AnB
-
-    # final statistics
-    dice = 2.0 * AnB / (A + B)
-    ious = AnB / AuB 
-
-    precision = TP / (TP + FP)
-    recall    = TP / (TP + FN)
-    # f1      = 2 * precision * recall / (precision + recall) same as dice
 
     # save A,B,AnB,AuB to file
     df = pd.DataFrame(np.transpose(np.array([A,B,AnB,AuB])), columns = ['A','B','AnB','AuB'])
     df.to_csv(os.path.join(OUTPUT_DIR, "per_image", f.replace("nuclei", "measures")))
-
-    all_dice[u] = np.nanmean(dice)
-    all_ious[u] = np.nanmean(ious)
-
-    all_precision[u] = np.nanmean(precision)
-    all_recall[u] = np.nanmean(recall)
-    #all_f1[u]   = np.nanmean(f1)
-
-df = pd.DataFrame(np.transpose(np.array([all_dice, all_ious, all_precision, all_recall])), columns = ['Dice','IoUs','Precision','Recall'])
-df.to_csv(os.path.join(OUTPUT_DIR, "measures.csv"))
-
-with open(os.path.join(OUTPUT_DIR, "statistics.csv"), "w") as f:
-    f.write("Dice / F1 = {:.4f}\nIoU       = {:.4f}\nPrecision = {:.4f}\nRecall    = {:.4f}\n".format(np.nanmean(all_dice), np.nanmean(all_ious), np.nanmean(all_precision), np.nanmean(all_recall)))

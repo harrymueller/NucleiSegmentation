@@ -5,4 +5,4 @@ mkdir -p $DIR/orig $DIR/masks $DIR/results/segments $DIR/results/outlines
 mv $DIR/*png $DIR/orig
 mv $DIR/*.tif $DIR/masks
 
-python3 other_algos/deepcell/convert.py
+python3 algos/deepcell/convert.py
