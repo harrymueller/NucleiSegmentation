@@ -6,7 +6,7 @@ library(raster)
 library(RColorBrewer)
 library(viridis)
 
-source("/mnt/data/scripts/rscripts/functions/accurate_plot.R")
+source("/mnt/data/scripts/analysis/rscripts/functions/accurate_plot.R")
 
 # params
 library(argparser)
@@ -28,15 +28,16 @@ SAVE_TO_CSV = F#!is.null(argv$save_to_csv)
 #GENES = c("Krt4", "Krt6b", "Tchh", "Mki67")
 #GENES = c("Tchh", "Krt6b", "Krt4")
 #GENES = c("Gsn", "Ttn", "Mpz", "Krt13", "Ttn", "Mpz", "Frem2", "Efna5", "Krt86", "Frem2", "Cpm", "Krt84", "Kcnq5", "Pir", "Fetub", "Lef1", "Runx2", "Tchh", "Krt15", "Krt76", "Krt84", "Krt76", "Krt84", "Krt78")
-GENES = c("Acta2")
-#library(data.table)
-#library(readxl)
-#GENES = as.data.frame(read_excel("bin10_plots.xlsx", col_names = F, sheet = 1))[,1]
+#GENES = c("Acta2")
+library(data.table)
+library(readxl)
+GENES = as.data.frame(read_excel("genes.xlsx", col_names = F, sheet = 1))[,1]
+GENES = GENES[2:length(GENES)]
 #print(GENES)
 
 # output directory
-INPUT_DIR = "/mnt/data/R_analysis/gemRDS"
-OUTPUT_DIR = sprintf("/mnt/data/R_analysis/count_feature_plots/gene_expression_plots/%s", argv$name)
+INPUT_DIR = "/mnt/data/R_analysis_original/gemRDS/original_gems"
+OUTPUT_DIR = sprintf("/mnt/data/R_analysis_original/count_feature_plots/gene_expression_plots/%s", argv$name)
 if (!dir.exists(OUTPUT_DIR)) dir.create(OUTPUT_DIR)
 
 colours = switch(argv$colour,
@@ -90,7 +91,8 @@ for (id in TONGUE_ID) {
                               dpi = 750,
                               minres = 1500,
                               crop = FALSE,
-                              black_background = FALSE)
+                              black_background = FALSE,
+                              use_discrete_colours = TRUE)
             } else {
               if (is.null(df)) {
                 df = data

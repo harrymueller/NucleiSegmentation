@@ -11,7 +11,7 @@ library(patchwork)
 library(raster)
 library(RColorBrewer)
 
-source("/mnt/data/scripts/rscripts/functions/accurate_plot.R")
+source("/mnt/data/scripts/analysis/rscripts/functions/accurate_plot.R")
 
 # params
 DIR = "/mnt/data/R_analysis"

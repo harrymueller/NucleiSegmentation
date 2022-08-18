@@ -30,7 +30,7 @@ NAME = sprintf("%s_bin%s_subset%s_res%s", TONGUE_ID, BINSIZE, DIAMETER, round(RE
 PLOTS_DIR = sprintf("/mnt/data/R_analysis/umap_clusters/%s/plots", METHOD_NAME)
 RDS_DIR = sprintf("/mnt/data/R_analysis/umap_clusters/%s/RDS", METHOD_NAME)
 
-source("/mnt/data/scripts/rscripts/functions/accurate_plot.R")
+source("/mnt/data/scripts/analysis/rscripts/functions/accurate_plot.R")
 
 if (!dir.exists(PLOTS_DIR)) dir.create(PLOTS_DIR)
 if (!dir.exists(RDS_DIR)) dir.create(RDS_DIR)

@@ -28,7 +28,7 @@ if (is.null(DIAMETER)) {
   INPUT_DIR = "/mnt/data/R_analysis/subsets"
   OUTPUT_DIR = sprintf("%s_subset%s", OUTPUT_DIR, DIAMETER)
 }
-source("/mnt/data/scripts/rscripts/functions/accurate_plot.R")
+source("/mnt/data/scripts/analysis/rscripts/functions/accurate_plot.R")
   
 if (!dir.exists(OUTPUT_DIR)) dir.create(OUTPUT_DIR)
 

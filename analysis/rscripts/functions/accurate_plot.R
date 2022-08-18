@@ -11,7 +11,8 @@ accurate_plot <- function (data, # dataframe with y,x,value
                            custom_colours = c(), # vector of colours
                            left_plot = c(), # ggplot obj to plot the left of this
                            black_background = FALSE, # whether to plot over a black background
-                           spot_mappings = NULL # pass a spot mapping if required
+                           spot_mappings = NULL, # pass a spot mapping if required
+                           use_discrete_colours = TRUE
                           ) {
   if (!is.null(spot_mappings)) {
     names(data) = c("imagerow", "imagecol", "values") # ensures correct names
@@ -60,7 +61,8 @@ accurate_plot <- function (data, # dataframe with y,x,value
   
   p$labels$fill <- legend_name
   if (length(custom_colours) > 0)
-    p = p + scale_fill_manual(values = custom_colours) #scale_fill_gradient2(low = "yellow", high="red")
+    p = p + if (use_discrete_colours) scale_fill_gradientn(colours = custom_colours)
+      else scale_fill_manual(values = custom_colours)
   if (length(left_plot) == 0) {
     ggsave(filename, p, height=height, width=width + legend_space*2, dpi=dpi, limitsize = FALSE)
     if (crop) system(sprintf("convert %s -trim +repage %s", filename, filename))
