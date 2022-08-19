@@ -1,11 +1,14 @@
 import numpy as np
 import cv2 as cv
-import os
+import os, sys
+
 
 # consts
-ORIG_DIR = "/mnt/perkinsdata/tongue_STOmics/benchmarking/25_2k_4/deepcell/orig"
-MASK_DIR = "/mnt/perkinsdata/tongue_STOmics/benchmarking/25_2k_4/deepcell/masks"
-OUTPUT_DIR = "/mnt/perkinsdata/tongue_STOmics/benchmarking/25_2k_4/deepcell/results"
+
+DIR = sys.argv[1]
+ORIG_DIR = os.path.join(DIR, "orig")
+MASK_DIR = os.path.join(DIR, "masks")
+OUTPUT_DIR = os.path.join(DIR, "results")
 
 RED = np.array([0,0,255])
 

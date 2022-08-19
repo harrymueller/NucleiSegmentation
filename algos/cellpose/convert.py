@@ -1,10 +1,11 @@
 import numpy as np
 import matplotlib.image as mpimg
-import os
+import os, sys
 
 # consts
-INPUT_DIR = "/mnt/perkinsdata/tongue_STOmics/benchmarking/25_2k_4/cellpose/pickles"
-OUTPUT_DIR = "/mnt/perkinsdata/tongue_STOmics/benchmarking/25_2k_4/cellpose/results"
+DIR = sys.argv[1]
+INPUT_DIR = os.path.join(DIR, "pickles")
+OUTPUT_DIR = os.path.join(DIR, "results")
 
 outputs = [os.path.join(OUTPUT_DIR, "outlines"), 
            os.path.join(OUTPUT_DIR, "segments")]
