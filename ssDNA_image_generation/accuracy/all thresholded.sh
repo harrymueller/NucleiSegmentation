@@ -1,5 +1,5 @@
 #!/bin/bash
-DIR="/mnt/perkinsdata/tongue_STOmics/benchmarking/25_2k_4"
+DIR="/mnt/perkinsdata/tongue_STOmics/benchmarking/25_2k_4_thresholded"
 
 echo "Watershed..."
 python3 get_A_B.py $DIR watershed
@@ -14,7 +14,7 @@ echo "Measures..."
 python3 get_measures.py $DIR
 
 echo "Summarise..."
-#python3 summarise.py $DIR
+python3 summarise.py $DIR
 
 echo "Format Summary..."
-#python3 format_summary.py $DIR
+python3 format_summary.py $DIR

@@ -46,13 +46,13 @@ def main():
         if NAME == "watershed":
             false = false[:,:-1] # remove NaN col
 
-        measures_tf = get_areas(true, false)
+        #measures_tf = get_areas(true, false)
         measures_ft = get_areas(false, true)
 
         # save A,B,AnB,AuB to file
-        df = pd.DataFrame(np.transpose(np.array(measures_tf)), 
-                          columns = ['A', 'B', 'AnB', "ent_w", "ent_wo"])
-        df.to_csv(os.path.join(OUTPUT_DIR, "per_image", "tf", f.replace("segments", "measures")))
+        #df = pd.DataFrame(np.transpose(np.array(measures_tf)), 
+        #                  columns = ['A', 'B', 'AnB', "ent_w", "ent_wo"])
+        #df.to_csv(os.path.join(OUTPUT_DIR, "per_image", "tf", f.replace("segments", "measures")))
         df = pd.DataFrame(np.transpose(np.array(measures_ft)), 
                           columns = ['A', 'B', 'AnB', "ent_w", "ent_wo"])
         df.to_csv(os.path.join(OUTPUT_DIR, "per_image", "ft", f.replace("segments", "measures")))
@@ -86,7 +86,7 @@ def get_areas(A_segments, B_segments):
     # loop through segments
     for (i, A_id) in enumerate(A_ids):
         # skip black
-        if A_id == 0: continue
+        if i == 0 or A_id == 0: continue
 
         # masks
         A_mask = A_segments == A_id
@@ -100,15 +100,12 @@ def get_areas(A_segments, B_segments):
         # false ids
         B_ids = np.unique(B_masked) # sorted
 
-        # find the colour that occurs most in the mask
-        if len(B_ids) > 1:
-            # count number of pixels per B id
-            tallies = [np.count_nonzero(B_masked == B_id) for B_id in B_ids]
-            B_id = B_ids[np.argmax(tallies[1:])+1] # ignore the first tally for background
+        # create a list with size of B_id in mask - count number of pixels per B id
+        tallies = [np.count_nonzero(B_masked == B_id) for B_id in B_ids]
 
-        # otherwise use the only one
-        else: B_id = B_ids[0]
-        
+        # find the B_id that occurs most in the mask
+        B_id = B_ids[0] if len(B_ids) == 1 else B_ids[np.argmax(tallies[1:])+1] # ignore the first tally for background
+
         if B_id == 1: continue # skip if background the major colour
         
         # area measures
@@ -127,7 +124,7 @@ def get_areas(A_segments, B_segments):
             if j != 1: ent_wo[i] += frac * ln(frac)
 
     # get the union
-    return (A, B, AnB, ent_w*(-1), ent_wo*(-1))
+    return (A, B, AnB, np.abs(ent_w), np.abs(ent_wo))
 
 if __name__ == "__main__":
     main()
