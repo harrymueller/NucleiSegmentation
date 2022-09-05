@@ -26,7 +26,8 @@ for orig in os.listdir(ORIG_DIR):
     # load orig image
     print("Loading original image")
     im = cv.imread(os.path.join(ORIG_DIR, sample + ".png"))
-
+    print(x)
+    print(im)
     # get outlines of segments
     #contours, hierarchy = cv.findContours(x, cv.RETR_FLOODFILL, cv.CHAIN_APPROX_SIMPLE)
 
@@ -35,6 +36,7 @@ for orig in os.listdir(ORIG_DIR):
     unique_vals = np.unique(x)
 
     for i in range(x.shape[1]): # x
+        if i % 100 == 0: print(i)
         for j in range(x.shape[0]): # y
             if x[j,i] != 0: # not background px
                 # fix new mask
@@ -58,6 +60,7 @@ for orig in os.listdir(ORIG_DIR):
 
     x.dtype = np.uint32
     for i in range(1, len(unique_vals)):
+        if i % 50 == 0: print(i)
         x[x == unique_vals[i]] = i
 
     x = x + 1 # make background 1

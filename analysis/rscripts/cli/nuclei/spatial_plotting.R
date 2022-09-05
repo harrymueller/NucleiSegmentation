@@ -11,6 +11,7 @@ library(argparser)
 args <- arg_parser("Plotting nCount, nFeature, Malat1 and Neat1 violin and spatial plots.")
 args <- add_argument(args, "--infile", help = "Input File")
 args <- add_argument(args, "--outdir", help = "Output Dir")
+args <- add_argument(args, "--separate", help = "separate plots", default = NULL)
 argv <- parse_args(args)
 
 OUTPUT_DIR = argv$outdir
@@ -27,9 +28,12 @@ spot_mappings = data$spot_mappings
 # plots
 colours = rev(brewer.pal(n = 11, name = "Spectral"))
 
+BIN_SIZE = 15
+GENES=c("Malat1", "Neat1")
+print(obj)
 i = 0
 for (t in c("nCount_Spatial", "nFeature_Spatial", "Malat1", "Neat1")) {
-  if (BIN_SIZE > 11) {
+  if (is.null(args$separate)) {
     #left_plot = VlnPlot(obj, features = t, pt.size = 0.05) + NoLegend()
     isGene = t %in% GENES
     accurate_plot(SpatialPlot(obj, features = t)$data, 
