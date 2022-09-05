@@ -9,7 +9,7 @@ MEASURES = "{dir}/{tool}/results/stats/measures_{tf_ft}.csv"
 OUTPUT = "{dir}/accuracy.csv"
 
 COLS = ["ID", "TF_FT", "F1_m", "F1_s", "IoU_m", "IoU_s", "Precision_m", "Precision_s", 
-        "Recall_m", "Recall_s", "Entropy_w", "Entropy_w_s", "Entropy_wo", "Entropy_wo_s"]
+        "Recall_m", "Recall_s", "Entropy_w_m", "Entropy_w_s", "Entropy_wo_m", "Entropy_wo_s"]
 TYPES = {i: str if i == "ID" or i == "TF_FT" else "float32" for i in COLS}
 summary = pd.DataFrame(columns = COLS)
 

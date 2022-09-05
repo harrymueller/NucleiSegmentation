@@ -46,13 +46,13 @@ def main():
         if NAME == "watershed":
             false = false[:,:-1] # remove NaN col
 
-        #measures_tf = get_areas(true, false)
+        measures_tf = get_areas(true, false)
         measures_ft = get_areas(false, true)
 
         # save A,B,AnB,AuB to file
-        #df = pd.DataFrame(np.transpose(np.array(measures_tf)), 
-        #                  columns = ['A', 'B', 'AnB', "ent_w", "ent_wo"])
-        #df.to_csv(os.path.join(OUTPUT_DIR, "per_image", "tf", f.replace("segments", "measures")))
+        df = pd.DataFrame(np.transpose(np.array(measures_tf)), 
+                          columns = ['A', 'B', 'AnB', "ent_w", "ent_wo"])
+        df.to_csv(os.path.join(OUTPUT_DIR, "per_image", "tf", f.replace("segments", "measures")))
         df = pd.DataFrame(np.transpose(np.array(measures_ft)), 
                           columns = ['A', 'B', 'AnB', "ent_w", "ent_wo"])
         df.to_csv(os.path.join(OUTPUT_DIR, "per_image", "ft", f.replace("segments", "measures")))

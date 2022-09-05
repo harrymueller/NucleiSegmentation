@@ -14,7 +14,7 @@ echo "Measures..."
 python3 get_measures.py $DIR
 
 echo "Summarise..."
-#python3 summarise.py $DIR
+python3 summarise.py $DIR
 
 echo "Format Summary..."
-#python3 format_summary.py $DIR
+python3 format_summary.py $DIR

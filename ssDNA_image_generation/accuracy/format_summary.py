@@ -6,7 +6,7 @@ import sys
 DIR = sys.argv[1]
 TOOLS = ["watershed", "cellpose", "deepcell"]
 INPUT = "{dir}/accuracy.csv"
-OUTPUT = "{dir}/formatted_accuracy.csv"
+OUTPUT = "{dir}/formatted_accuracy_{type}.csv"
 
 # new col names
 NEW_COLS = ["ID", "TF||FT", "F1", "IoU", "Precision", "Recall", "Entropy w/", "Entropy w/o"]
@@ -40,8 +40,21 @@ new = new.loc[[0,3,1,4,2,5]]
 # add mean||std headers
 new.insert(2, "Stat", ["Mean", "Std"]*6)
 
-# transpose
-new = new.reset_index(drop = True).transpose()
+# round to 3dp and add 0s
+new = new.reset_index(drop = True).round(3).astype(str)
+
+# add zeros
+def add_zeros(x):
+    return [a + "0"*(5-len(a)) if i > 2 else a for (i, a) in enumerate(x)]
+
+new = new.apply(add_zeros, raw = True, axis = 1)
+
+# subset and transpose
+df_all = new.transpose()
+df_tf = new[new["TF||FT"] == "True->False"].drop("TF||FT", axis = 1).transpose()
+df_ft = new[new["TF||FT"] == "False->True"].drop("TF||FT", axis = 1).transpose()
 
 # save
-new.to_csv(OUTPUT.format(dir = DIR), index = True, header = False)
+df_all.to_csv(OUTPUT.format(dir = DIR, type = "all"), index = True, header = False)
+df_tf.to_csv(OUTPUT.format(dir = DIR, type = "tf"), index = True, header = False)
+df_ft.to_csv(OUTPUT.format(dir = DIR, type = "ft"), index = True, header = False)
