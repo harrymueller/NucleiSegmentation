@@ -1,10 +1,3 @@
-
-OUTPUT_DIR = "/mnt/data/R_analysis_original/page/tongue-4_corp1"
-INPUT_DIR = OUTPUT_DIR
-PART = "tongue-4-1.corp1"
-SAMPLE_NAME = "tongue-5_bin30"
-MARKERS = "/mnt/data/R_analysis_original/page/giotto_markers.Rds"
-
 ### installing packages
 if (!requireNamespace("Giotto", quietly=T)) remotes::install_github("RubD/Giotto") 
 if (!requireNamespace("rio", quietly=T)) install.packages("rio")
@@ -19,6 +12,22 @@ library(raster)
 library(RColorBrewer)
 library(viridis)
 
+# params
+library(argparser)
+args <- arg_parser("Cluster the seurat obj then plot a umap and spatial image")
+args <- add_argument(args, "--infile", help = "Unnormalised Input File")
+args <- add_argument(args, "--normfile", help = "Normalised File")
+args <- add_argument(args, "--method", help = "Normalised File")
+args <- add_argument(args, "--outdir", help = "Output Dir")
+args <- add_argument(args, "--markers", help = "Markers RDS")
+argv <- parse_args(args)
+
+OUTPUT_DIR = argv$outdir
+INPUT = argv$infile
+MARKERS = argv$markers
+NORM_FILE = argv$normfile
+ASSAY_TO_USE = ifelse(METHOD == "SCT", "SCT", "Spatial")
+
 installGiottoEnvironment() 
 
 # DEG from SN Data
@@ -30,34 +39,20 @@ matrix = makeSignMatrixPAGE(sign_names = names(giotto_markers),
 
 # PAGE Enrichment
 ## Load spatial data
-if (T) {
-  counts = t(as(Matrix::readMM(file.path(INPUT_DIR, PART, paste0(PART, ".raw.count.mtx"))), "dgCMatrix"))
-  gene_ids = read.csv(file.path(INPUT_DIR, PART, paste0(PART, ".raw.geneid.csv")), row.names = NULL)$row.names
+seurat = readRDS(INPUT)$seurat
 
-  spatial_locations = read.csv(file.path(INPUT_DIR, PART, paste0(PART, ".raw.binid.csv")))
-  # norm
-  norm_counts = as(Matrix::readMM(file.path(INPUT_DIR, PART, paste0(PART, ".raw.corrected.count.mtx"))), "dgCMatrix")
-  norm_gene_ids = read.csv(file.path(INPUT_DIR, PART, paste0(PART, ".raw.sct.geneid.csv")), row.names = NULL)$X
+counts = seurat@assays$Spatial@counts
+spatial_locations = seurat@images$slice1@coordinates[c("row", "col")]
+colnames(spatial_locations) = c("x", "y")
 
-  norm_spatial_locations = read.csv(file.path(INPUT_DIR, PART, paste0(PART, ".raw.sct.binid.csv")))
-  #subsetting
-  mask = gene_ids %in% norm_gene_ids
-  new_gene_ids = gene_ids[mask]
-  new_counts = counts[mask,]
-  # new
-  giotto = createGiottoObject(new_counts, spatial_locs = spatial_locations[c("x","y")], gene_metadata = gene_ids, norm_expr = norm_counts)
-} else {
-  seurat = readRDS(file.path("/mnt/data/R_analysis_original/gemRDS", "tongue-5_bin50_spatialObj.rds"))
+# Normalised count
+norm_seurat = readRDS(NORM_FILE)
+norm_counts = seurat@assays[[ASSAY_TO_USE]]@counts
 
-  counts = seurat@assays$Spatial@counts
-  spatial_locations = seurat@images$slice1@coordinates[c("row", "col")]
-  colnames(spatial_locations) = c("x", "y")
-
-  giotto = createGiottoObject(counts, spatial_locs = spatial_locations)
-}
+giotto = createGiottoObject(counts, spatial_locs = spatial_locations, norm_counts = norm_counts)
 
 # normalise then run giotto
-giotto <- normalizeGiotto(gobject = giotto)
+#giotto <- normalizeGiotto(gobject = giotto)
 giotto = runPAGEEnrich(gobject = giotto,
                        sign_matrix = matrix,
                        min_overlap_genes = 2)

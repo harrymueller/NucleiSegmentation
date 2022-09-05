@@ -10,16 +10,12 @@ library(argparser)
 args <- arg_parser("Cluster the seurat obj then plot a umap and spatial image")
 args <- add_argument(args, "--infile", help = "Input File")
 args <- add_argument(args, "--outdir", help = "Output Dir")
-args <- add_argument(args, "--method", help="method of normalisation, SCT || LN")
 args <- add_argument(args, "--resolution", help="seurat FindCluster resolution", default=0.5)
 argv <- parse_args(args)
 
 OUTPUT_DIR = argv$outdir
 INPUT = argv$infile
-METHOD = argv$method
-RESOLUTION = argv$resolution
-
-METHOD_NAME = ifelse(METHOD == "SCT", "SCTransform", "NormalizeData")
+RESOLUTION = as.double(argv$resolution)
 
 source("../../functions/accurate_plot.R")
 
