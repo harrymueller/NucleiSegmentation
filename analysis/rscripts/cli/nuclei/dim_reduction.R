@@ -17,8 +17,8 @@ METHOD = argv$method
 OUTPUT = paste0(OUTPUT_DIR, "/", "dim_red_", METHOD, ".rds")
 METHOD_NAME = ifelse(METHOD == "SCT", "SCTransform", "NormalizeData")
 
-data = readRDS(INPUT)    
-obj = data$seurat
+obj = readRDS(INPUT)    
+#obj = obj$seurat
 
 if (METHOD == "SCT") {
     obj <- SCTransform(obj, assay = "Spatial", verbose = FALSE)

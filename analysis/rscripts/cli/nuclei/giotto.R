@@ -48,18 +48,19 @@ colnames(spatial_locations) = c("x", "y")
 
 # Normalised count
 norm_seurat = readRDS(NORM_FILE)
-norm_counts = norm_seurat@assays[[ASSAY_TO_USE]]@counts
+#norm_counts = norm_seurat@assays[[ASSAY_TO_USE]]@counts
 
-giotto = createGiottoObject(counts, spatial_locs = spatial_locations, norm_counts = norm_counts)
+#giotto = createGiottoObject(counts, spatial_locs = spatial_locations, norm_expr = norm_counts)
+giotto = createGiottoObject(counts, spatial_locs = spatial_locations)
 
 # normalise then run giotto
-#giotto <- normalizeGiotto(gobject = giotto)
+giotto <- normalizeGiotto(gobject = giotto)
 giotto = runPAGEEnrich(gobject = giotto,
                        sign_matrix = matrix,
                        min_overlap_genes = 2)
-
+print("finished giotto")
 saveRDS(giotto, file.path(OUTPUT_DIR, "giotto_complete.Rds"))
-
+print(paste0("saved ", file.path(OUTPUT_DIR, "giotto_complete.Rds"))
 # plotting
 cell_types = names(giotto@spatial_enrichment$PAGE)[2:16]
 

@@ -3,7 +3,7 @@
 options(future.globals.maxSize = 100000000 * 1024^2,scipen = 20000000)
 set.seed(6)
 
-source("rscripts/functions/gem2rds.R")
+source("../../functions/gem2rds.R")
 
 library(argparser)
 args <- arg_parser("Loading BGI spatial data(.gem)")

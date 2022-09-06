@@ -20,8 +20,7 @@ RESOLUTION = as.double(argv$resolution)
 source("../../functions/accurate_plot.R")
 
 # read in RDS
-data = readRDS(INPUT)
-obj = data$seurat
+obj = readRDS(INPUT)
 
 # find clusters and plot
 obj <- FindClusters(obj, resolution = RESOLUTION)
