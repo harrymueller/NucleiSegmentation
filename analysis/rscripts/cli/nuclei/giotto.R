@@ -39,7 +39,9 @@ matrix = makeSignMatrixPAGE(sign_names = names(giotto_markers),
 
 # PAGE Enrichment
 ## Load spatial data
-seurat = readRDS(INPUT)$seurat
+data = readRDS(INPUT)
+seurat = data$seurat
+spot_mappings = data$spot_mappings
 
 counts = seurat@assays$Spatial@counts
 spatial_locations = seurat@images$slice1@coordinates[c("row", "col")]
@@ -111,7 +113,8 @@ for (n in c("ranks", "max", "norm")) {
     dpi = 400,
     minres = 1000,
     legend_space = 4,
-    custom_colours = custom_colours
+    custom_colours = custom_colours,
+    spot_mappings = spot_mappings
   )
 }
 
