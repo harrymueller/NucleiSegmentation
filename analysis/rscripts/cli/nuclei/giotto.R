@@ -26,7 +26,7 @@ OUTPUT_DIR = argv$outdir
 INPUT = argv$infile
 MARKERS = argv$markers
 NORM_FILE = argv$normfile
-ASSAY_TO_USE = ifelse(METHOD == "SCT", "SCT", "Spatial")
+ASSAY_TO_USE = ifelse(argv$method == "SCT", "SCT", "Spatial")
 
 installGiottoEnvironment() 
 
@@ -42,14 +42,13 @@ matrix = makeSignMatrixPAGE(sign_names = names(giotto_markers),
 data = readRDS(INPUT)
 seurat = data$seurat
 spot_mappings = data$spot_mappings
-
 counts = seurat@assays$Spatial@counts
-spatial_locations = seurat@images$slice1@coordinates[c("row", "col")]
+spatial_locations = seurat@images$stomics@coordinates[c("row", "col")]
 colnames(spatial_locations) = c("x", "y")
 
 # Normalised count
 norm_seurat = readRDS(NORM_FILE)
-norm_counts = seurat@assays[[ASSAY_TO_USE]]@counts
+norm_counts = norm_seurat@assays[[ASSAY_TO_USE]]@counts
 
 giotto = createGiottoObject(counts, spatial_locs = spatial_locations, norm_counts = norm_counts)
 
