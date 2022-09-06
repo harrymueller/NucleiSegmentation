@@ -47,8 +47,13 @@ spatial_locations = seurat@images$stomics@coordinates[c("row", "col")]
 colnames(spatial_locations) = c("x", "y")
 
 # Normalised count
-norm_seurat = readRDS(NORM_FILE)
+#norm_seurat = readRDS(NORM_FILE)
 #norm_counts = norm_seurat@assays[[ASSAY_TO_USE]]@counts
+
+# add char to colnames to ensure only processed as characters
+colnames(counts) = paste0(colnames(counts), "_")
+rownames(spatial_locations) = paste0(rownames(spatial_locations), "_")
+spot_mappings$nuclei_id = paste0(spot_mappings$nuclei_id)
 
 #giotto = createGiottoObject(counts, spatial_locs = spatial_locations, norm_expr = norm_counts)
 giotto = createGiottoObject(counts, spatial_locs = spatial_locations)
@@ -76,7 +81,7 @@ print("plot enrichment scores")
 for (ct in cell_types) {
   print(ct)
   dat = cbind(page_enrichment[,c("sdimy", "sdimx")], page_enrichment[[ct]])
-  accurate_plot(dat, filename = file.path(OUTPUT_DIR, paste0(SAMPLE_NAME, "_", ct, ".png")), custom_colours = viridis(11))
+  accurate_plot(dat, filename = file.path(OUTPUT_DIR, paste0(SAMPLE_NAME, "_", ct, ".png")), custom_colours = viridis(11), spot_mappings = spot_mappings)
 }
 
 page = page_enrichment
