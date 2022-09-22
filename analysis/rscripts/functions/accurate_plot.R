@@ -16,8 +16,10 @@ accurate_plot <- function (data, # dataframe with y,x,value
                           ) {
   if (!is.null(spot_mappings)) {
     names(data) = c("imagerow", "imagecol", "values") # ensures correct names
-    data = merge(data, spot_mappings, by.x = c("imagerow", "imagecol"), by.y = c("cy", "cx"))
-    data = data[c("y", "x", "values")]
+
+    data = merge(data, spot_mappings[,2:5], by.x = c("imagerow", "imagecol"), by.y = c("cy", "cx"))
+    #data = data[c("y", "x", "values")]
+    data = data.frame("y" = data$y, "x" = data$x, "values" = data$values)
   } else {
     names(data) = c("y", "x", "values")
   }
