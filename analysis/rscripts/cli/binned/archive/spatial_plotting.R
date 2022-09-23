@@ -9,35 +9,21 @@ library(viridis)
 # params
 library(argparser)
 args <- arg_parser("Plotting nCount, nFeature, Malat1 and Neat1 violin and spatial plots.")
-args <- add_argument(args, "--binsize", help = "Bin Size")
-args <- add_argument(args, "--id", help = "Tongue ID")
-args <- add_argument(args, "--diameter", help="if subsetting, supply the diameter", default=NULL)
+args <- add_argument(args, "--input", help = "Input")
+args <- add_argument(args, "--output", help = "Output dir")
 argv <- parse_args(args)
 
-BIN_SIZE  = strtoi(argv$binsize)
-TONGUE_ID = argv$id
-DIAMETER  = NULL # argv$diameter
+INPUT = argv$input
+OUTPUT_DIR = argv$output
 
+# INPUT OUTPUT DIR
 GENES = c("Krt36", "Krt84", "Krt35", "Krt6b", "Krt6a", "Dmd", "Neb", "Ttn", "Rbfox1", "C1qtnf7", "Dclk1", "Mmp16", "Mecom", "Plcb1", "Flt1", "Fetub", "Ecm1", "Fmo2", "Pappa", "Hs3st5", "St3gal4", "Mki67", "Cenpf", "Cenpe", "Frem2", "Sema3c", "Pcdh7", "Unc5c", "Cpm", "Hhip", "Hephl1") 
 
-# other consts
-OUTPUT_DIR = sprintf("/mnt/data/R_analysis/count_feature_plots/%s_bin%s", TONGUE_ID, BIN_SIZE)
-if (is.null(DIAMETER)) {
-  INPUT_DIR = "/mnt/data/R_analysis/gemRDS"
-} else {
-  INPUT_DIR = "/mnt/data/R_analysis/subsets"
-  OUTPUT_DIR = sprintf("%s_subset%s", OUTPUT_DIR, DIAMETER)
-}
 source("/mnt/data/scripts/analysis/rscripts/functions/accurate_plot.R")
   
 if (!dir.exists(OUTPUT_DIR)) dir.create(OUTPUT_DIR)
 
 # read in RDS
-if (is.null(DIAMETER)) {
-  INPUT = sprintf("%s/%s_bin%s_spatialObj.rds", INPUT_DIR, TONGUE_ID, BIN_SIZE)
-} else {
-  INPUT = sprintf("%s/%s_bin%s_subset%s.rds", INPUT_DIR, TONGUE_ID, BIN_SIZE, DIAMETER)
-}
 obj = readRDS(INPUT)
 
 # plots
