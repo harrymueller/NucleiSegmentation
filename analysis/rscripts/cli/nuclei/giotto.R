@@ -56,6 +56,7 @@ rownames(spatial_locations) = paste0(rownames(spatial_locations), "_")
 spot_mappings$nuclei_id = paste0(spot_mappings$nuclei_id)
 
 #giotto = createGiottoObject(counts, spatial_locs = spatial_locations, norm_expr = norm_counts)
+if (F) {
 giotto = createGiottoObject(counts, spatial_locs = spatial_locations)
 
 # normalise then run giotto
@@ -65,7 +66,10 @@ giotto = runPAGEEnrich(gobject = giotto,
                        min_overlap_genes = 2)
 print("finished giotto")
 saveRDS(giotto, file.path(OUTPUT_DIR, "giotto_complete.Rds"))
-print(paste0("saved ", file.path(OUTPUT_DIR, "giotto_complete.Rds"))
+} else {
+	giotto = readRDS(file.path(OUTPUT_DIR, "giotto_complete.Rds"))
+}
+
 # plotting
 cell_types = names(giotto@spatial_enrichment$PAGE)[2:16]
 
@@ -81,7 +85,7 @@ print("plot enrichment scores")
 for (ct in cell_types) {
   print(ct)
   dat = cbind(page_enrichment[,c("sdimy", "sdimx")], page_enrichment[[ct]])
-  accurate_plot(dat, filename = file.path(OUTPUT_DIR, paste0(SAMPLE_NAME, "_", ct, ".png")), custom_colours = viridis(11), spot_mappings = spot_mappings)
+  accurate_plot(dat, filename = file.path(OUTPUT_DIR, paste0(ct, ".png")), custom_colours = viridis(11), spot_mappings = spot_mappings)
 }
 
 page = page_enrichment
@@ -111,15 +115,17 @@ custom_colours = c("#F56867",    "#FEB915",    "#C798EE",    "#59BE86",    "#749
 "#787878",    "#DB4C6C",    "#9E7A7A",    "#554236",    "#AF5F3C",
 "#93796C",    "#F9BD3F",    "#DAB370",    "#877F6C",    "#268785")
 for (n in c("ranks", "max", "norm")) {
+	print(n)
   accurate_plot(
     cbind(page[,c("sdimy", "sdimx")], page[[n]]),
-    filename = file.path(OUTPUT_DIR, "plots", paste0(PART,"_",n,"_labels.png")),
+    filename = file.path(OUTPUT_DIR, "plots", paste0(n,"_labels.png")),
     legend_name = paste0("PAGE Cell Labels - ", n), 
     dpi = 400,
     minres = 1000,
     legend_space = 4,
     custom_colours = custom_colours,
-    spot_mappings = spot_mappings
+    spot_mappings = spot_mappings,
+    use_discrete_colours = FALSE
   )
 }
 
@@ -140,4 +146,4 @@ p = ggplot(vdat, aes(x = cell_type, y = scores, fill = cell_type)) +
   theme(axis.line=element_blank(),
         axis.text.x=element_blank(),
         axis.ticks=element_blank())
-ggsave(file.path(OUTPUT_DIR, "plots", paste0(PART,"_violins.png")), p, width = 14, dpi = 500)
+ggsave(file.path(OUTPUT_DIR, "plots", paste0("violins.png")), p, width = 14, dpi = 500)
