@@ -8,29 +8,39 @@ library(RColorBrewer)
 # params
 library(argparser)
 args <- arg_parser("Cluster the seurat obj then plot a umap and spatial image")
-args <- add_argument(args, "--inputfile", help="input file")
-args <- add_argument(args, "--outputdir", help="output dir")
-args <- add_argument(args, "--name", help = "name")
+args <- add_argument(args, "--id", help="id")
+args <- add_argument(args, "--binsize", help = "binsize")
 args <- add_argument(args, "--method", help="method of normalisation, SCT || LN")
+args <- add_argument(args, "--diameter", help="supply the diameter, 0 if not subsetting")
 args <- add_argument(args, "--resolution", help="seurat FindCluster resolution", default=0.5)
 argv <- parse_args(args)
 
-INPUT       = argv$inputfile
-OUTDIR      = argv$outputdir
-NAME        = argv$name
+TONGUE_ID   = argv$id
+METHOD      = argv$method
+BINSIZE     = as.integer(argv$binsize)
+DIAMETER    = as.integer(argv$diameter)
 RESOLUTION  = as.double(argv$resolution)
 
 METHOD_NAME = ifelse(METHOD == "SCT", "SCTransform", "NormalizeData")
+METHOD_FOLDER = ifelse(METHOD == "SCT", "scDimReducedRDS", "dimReducedRDS")
 
 # other consts
+INPUT_DIR = "/mnt/data/R_analysis/dimReduction"
+NAME = sprintf("%s_bin%s_subset%s_res%s", TONGUE_ID, BINSIZE, DIAMETER, round(RESOLUTION, 1))
+PLOTS_DIR = sprintf("/mnt/data/R_analysis/umap_clusters/%s/plots", METHOD_NAME)
+RDS_DIR = sprintf("/mnt/data/R_analysis/umap_clusters/%s/RDS", METHOD_NAME)
+
 source("/mnt/data/scripts/analysis/rscripts/functions/accurate_plot.R")
 
-PLOTS_DIR = paste0(OUTPUT_DIR, "/plots")
-RDS_DIR = paste0(OUTPUT_DIR, "/rds")
 if (!dir.exists(PLOTS_DIR)) dir.create(PLOTS_DIR)
 if (!dir.exists(RDS_DIR)) dir.create(RDS_DIR)
 
 # read in RDS
+if (DIAMETER == 0) {
+    INPUT = sprintf("%s/%s/%s_bin%s_red.Rds", INPUT_DIR, METHOD_NAME, TONGUE_ID, BINSIZE)
+} else {
+    INPUT = sprintf("%s/%s/%s_bin%s_subset%s_red.Rds", INPUT_DIR, METHOD_NAME, TONGUE_ID, BINSIZE, DIAMETER)
+}
 obj = readRDS(INPUT)
 
 # find clusters and plot

@@ -121,7 +121,7 @@ def get_areas(A_segments, B_segments):
             # calc p use MLE
             frac = tallies[j] / A[i]
             ent_w[i] += frac * log2(frac)
-            if j != 1: ent_wo[i] += frac * ln(frac)
+            if j != 1: ent_wo[i] += frac * log2(frac)
 
     # get the union
     return (A, B, AnB, np.abs(ent_w), np.abs(ent_wo))

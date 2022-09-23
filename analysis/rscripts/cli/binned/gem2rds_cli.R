@@ -14,12 +14,8 @@ args <- add_argument(args, "--proname", help = "", default = "None")
 args <- add_argument(args, "--image", help = "Whether to generate the 'fake' image", default = NULL)
 argv <- parse_args(args)
 
-#if (!dir.exists(outdir)) dir.create(outdir)
-#  outdir <- file.path(argv$outdir, argv$project_name)
-
 if (argv$proname == "None") {
     argv$proname <- stringr::str_replace(tail(unlist(strsplit(argv$infile,"/")),1), ".gem", "")
-    #project_name <- gsub(".bin.*","",project_name)
 }
 
 project_name <- paste0(argv$proname, "_bin", argv$binsize)

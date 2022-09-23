@@ -64,8 +64,7 @@ public class Generation : MonoBehaviour
     }
 
     /*
-    *   Checks whether a new object will have overlap with other objects 
-    *   Doesn't work perfectly
+    *   Checks whether a new object will have overlap with other objects
     */
     private bool CheckOverlap(GameObject obj, PrimitiveType type)
     {
@@ -77,6 +76,7 @@ public class Generation : MonoBehaviour
             // get start and end coords
             obj.GetComponent<CapsuleCollider>().isTrigger = false;
             Vector3 start; Vector3 end; float rad; 
+            // https://github.com/justonia/UnityExtensions/blob/master/PhysicsExtensions.cs
             PhysicsExtensions.ToWorldSpaceCapsule(obj.GetComponent<CapsuleCollider>(), out start, out end, out rad);
             return Physics.CheckCapsule(start, end, rad);
         }

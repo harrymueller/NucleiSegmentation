@@ -19,13 +19,13 @@ for tf_ft in ["tf", "ft"]:
         df = np.array(pd.read_csv(MEASURES.format(dir = DIR, tool = tool, tf_ft = tf_ft), index_col = 0).drop(columns = ["ID"]))
 
         # get means
-        means = np.mean(df[:,[0,2,4,6,8,9]], axis = 0)
+        means = np.mean(df[:,[0,2,4,6,8,10]], axis = 0)
 
         # combine stds by taking the sqrt of the mean of the variances
-        stds = np.power(df[:,[1,3,5,7]], 2) # get variances
+        stds = np.power(df[:,[1,3,5,7,9,11]], 2) # get variances
         stds = np.sqrt(np.sum(stds, axis = 0) / len(df[:,0]))
 
-        stds = np.hstack([stds, np.std(df[:,[8,9]], axis = 0)])
+        #stds = np.hstack([stds, np.std(df[:,[8,9]], axis = 0)])
         vals = [tool, tf_ft, *np.array(list(zip(means,stds))).reshape(len(COLS)-2)]
 
         summary = pd.concat([summary, pd.DataFrame([vals], columns = COLS)], ignore_index = True)
