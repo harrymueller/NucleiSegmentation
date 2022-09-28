@@ -3,13 +3,13 @@ if [ -z $2 ]; then
 	echo "-p pawsey"
 	echo "-l laptop"
 elif [ $2 == -p ]; then
-VOLUMES="-v /mnt/stomics:/mnt/data \
-    -v /data/tongue/scripts:/mnt/data/scripts \
-    -v /data/tongue/rstudio:/mnt/data/rstudio"
+    VOLUMES="-v /mnt/stomics:/mnt/data \
+        -v /data/tongue/scripts:/mnt/data/scripts \
+        -v /data/tongue/rstudio:/mnt/data/rstudio"
 elif [ $2 == -l ]; then 
 	VOLUMES="-v /mnt/perkinsdata/tongue_STOmics/discovery:/mnt/data \
-    -v /data/Perkins/TongueSTOmics/scripts:/mnt/data/scripts \
-    -v /data/Perkins/TongueSTOmics/rstudio:/mnt/data/rstudio"
+        -v /data/Perkins/TongueSTOmics/scripts:/mnt/data/scripts \
+        -v /data/Perkins/TongueSTOmics/rstudio:/mnt/data/rstudio"
 fi
 
 if [ -z $1 ]; then
