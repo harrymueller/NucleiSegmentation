@@ -1,0 +1,63 @@
+---
+title: "Giotto Plotting"
+---
+
+# Setup
+## Libraries
+```{r}
+library(ggplot2)
+```
+
+# consts
+```{r}
+DIR = "/mnt/data/R_analysis/giotto"
+PAGE_FILE = paste0(DIR, "/page_enrichment.Rds")
+```
+
+```{r}
+custom_colours = c("#F56867",    "#FEB915",    "#C798EE",    "#59BE86",    "#7495D3",
+"#D1D1D1",    "#6D1A9C",    "#15821E",    "#3A84E6",    "#997273",
+"#787878",    "#DB4C6C",    "#9E7A7A",    "#554236",    "#AF5F3C",
+"#93796C",    "#F9BD3F",    "#DAB370",    "#877F6C",    "#268785")
+```
+
+
+# load data
+```{r}
+page = readRDS(PAGE_FILE)
+```
+
+# add cell types
+```{r}
+# ranking
+ranked_page = page
+for (i in seq(2, 16)) {
+  ranked_page[[i]] = order(order(page[[i]], decreasing = TRUE))
+}
+
+# minimise - ie find highest rank
+page$ranks = apply(ranked_page[,2:16],1,which.min)
+page$ranks = factor(page$ranks, labels = names(page[,2:16]))
+```
+
+```{r}
+page$max = factor(apply(page[,2:16],1,which.max), labels = names(page[,2:16]))
+
+# normalised
+norm_page = page
+for (i in seq(2, 16)) {
+  norm_page[[i]] = (norm_page[[i]] - mean(norm_page[[i]])) / sd(norm_page[[i]])
+}
+page$norm = factor(apply(norm_page[,2:16],1,which.max), labels = names(page[,2:16]))
+```
+
+```{r}
+write.csv(page, paste0(DIR, "/page.csv"), row.names = FALSE)
+```
+
+
+
+
+
+
+
