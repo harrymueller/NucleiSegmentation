@@ -100,7 +100,7 @@ def get_areas(A_segments, B_segments):
         # false ids
         B_ids = np.unique(B_masked) # sorted
 
-        # create a list with size of B_id in mask - count number of pixels per B id
+        # create a list with size of B_id in mask - count number of pixels per B id within A - intersection
         tallies = [np.count_nonzero(B_masked == B_id) for B_id in B_ids]
 
         # find the B_id that occurs most in the mask
@@ -124,7 +124,7 @@ def get_areas(A_segments, B_segments):
             if j != 1: ent_wo[i] += frac * log2(frac)
 
     # get the union
-    return (A, B, AnB, np.abs(ent_w), np.abs(ent_wo))
+    return (A, B, AnB, -ent_w, -ent_wo)
 
 if __name__ == "__main__":
     main()

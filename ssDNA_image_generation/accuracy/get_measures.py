@@ -37,18 +37,25 @@ for tool in TOOLS:
 
             # calculated entropy weighted by area
             A_sum = np.sum(df["A"])
-            df["Entropy_w"] = df["ent_w"] * (df["A"] / A_sum)
-            df["Entropy_wo"] = df["ent_wo"] * (df["A"] / A_sum)
             
             vals = [f.replace(".csv", "")]
             if len(vals[0]) == 10: vals[0] = vals[0] + " "
-            for i in ["F1", "IoU", "Precision", "Recall"]:
+
+            for i in ["F1", "IoU", "Precision", "Recall", "ent_w", "ent_wo"]:
                 vals.append(np.nanmean(df[i]))
                 vals.append(np.nanstd(df[i]))
 
-            for i in ["Entropy_w", "Entropy_wo"]:
-                vals.append(np.sum(df[i]))
-                vals.append(np.nanstd(df[i]))
+            if False:
+                for i in ["F1", "IoU", "Precision", "Recall"]:
+                    vals.append(np.nanmean(df[i]))
+                    vals.append(np.nanstd(df[i]))
+
+                for i in ["Entropy_w", "Entropy_wo"]:
+                    vals.append(np.nanstd(df[i])) # calc standard deviations prior to weighting 
+
+                    df["Entropy_w"] = df["ent_w"] * (df["A"] / A_sum)
+                    df["Entropy_wo"] = df["ent_wo"] * (df["A"] / A_sum)
+                    vals.append(np.sum(df[i]))
 
             measures_df = pd.concat([measures_df, pd.DataFrame([vals], index = [int(vals[0].replace("measures_",""))], columns = COLS)])
 

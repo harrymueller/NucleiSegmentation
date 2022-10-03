@@ -15,9 +15,9 @@ RED = np.array([0,0,255])
 for orig in os.listdir(ORIG_DIR):
     sample = orig.replace(".png", "")
     
-    print("#"*20)
-    print(">>> " + sample[7:])
-    print("#"*20)
+    #print("#"*20)
+    #print(">>> " + sample[7:])
+    #print("#"*20)
 
     # load mask array
     print("Reading mask file")
