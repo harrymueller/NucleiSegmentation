@@ -7,7 +7,7 @@ elif [ $2 == -p ]; then
         -v /data/tongue/scripts:/mnt/data/scripts \
         -v /data/tongue/rstudio:/mnt/data/rstudio"
 elif [ $2 == -l ]; then 
-	VOLUMES="-v /mnt/perkinsdata/tongue_STOmics/discovery:/mnt/data \
+	VOLUMES="-v /mnt/perkinsdata/tongue_STOmics:/mnt/data \
         -v /data/Perkins/TongueSTOmics/scripts:/mnt/data/scripts \
         -v /data/Perkins/TongueSTOmics/rstudio:/mnt/data/rstudio"
 fi
