@@ -184,8 +184,6 @@ singularity exec ${visualSif} count \
     -m 128 
 
 # EXIT    
-exit 0
-if false; then
 	echo `date` " there is no image, tissueCut start......."
     /usr/bin/time -f "parse:[MEM]max:%M, avg:%t; [CPU]real:%e, user:%U.sys:%S, cpu:%P; [IO]i%I, o:%O" \
     singularity exec ${visualSif} tissueCut \
@@ -203,7 +201,6 @@ if false; then
          ln ${result_04tissuecut}/dnb_merge/bin200.png $result_sn/${SNid}.thumbnail.png
          ln ${result_04tissuecut}/${SNid}.tissue.gef $result_sn/${SNid}.tissue.gef
     fi
-fi
 
 
 #spatialCluster
