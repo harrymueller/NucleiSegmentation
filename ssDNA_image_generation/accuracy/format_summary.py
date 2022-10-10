@@ -48,6 +48,7 @@ def add_zeros(x):
     return [a + "0"*(5-len(a)) if i > 2 else a for (i, a) in enumerate(x)]
 
 new = new.apply(add_zeros, raw = True, axis = 1)
+new = new[["ID", "TF||FT", "Recall", "Precision", "F1", "IoU", "Entropy w/", "Entropy w/o"]]
 
 # subset and transpose
 df_all = new.transpose()
