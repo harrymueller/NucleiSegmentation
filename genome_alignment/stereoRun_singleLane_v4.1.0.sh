@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# FROM https://github.com/BGIResearch/SAW
+
 if [[ $# -lt 12 ]];then
     echo
     echo "usage: sh $0 -m maskFile -1 read1 -2 read2 -g indexedGenome -a annotationFile -o outDir -i image -t threads -s visualSif
